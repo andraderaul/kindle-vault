@@ -93,4 +93,4 @@ npx prisma migrate dev --name <name>  # new migration
 
 ## License
 
-MIT
+[MIT](LICENSE)
