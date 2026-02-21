@@ -1,0 +1,81 @@
+---
+description: Padrões para pages e layouts do App Router — Server Components, params, Suspense
+globs: src/app/**/*.tsx
+alwaysApply: false
+---
+
+# App Router — Padrões
+
+## Server Component por padrão
+
+- Pages são Server Components — sem `'use client'` a menos que necessário
+- Buscar dados diretamente nas pages, sem `useEffect` + fetch
+
+```tsx
+// ✅ Server Component buscando dados diretamente
+export default async function BookPage({ params }: Props) {
+  const { title } = await params
+  const highlights = await getHighlightsByBook(decodeURIComponent(title))
+  return <HighlightList highlights={highlights} />
+}
+```
+
+## params é uma Promise no Next.js 15
+
+- Sempre `await params` antes de acessar propriedades
+
+```tsx
+// ❌ quebra no Next.js 15
+export default async function Page({ params }: { params: { title: string } }) {
+  const title = params.title // erro — params é Promise
+
+// ✅
+type Props = { params: Promise<{ title: string }> }
+
+export default async function Page({ params }: Props) {
+  const { title } = await params
+```
+
+## useSearchParams requer Suspense
+
+- Qualquer Client Component que usa `useSearchParams()` deve estar dentro de `<Suspense>`
+
+```tsx
+// ✅ em page.tsx
+import { Suspense } from 'react'
+
+<Suspense fallback={<div style={{ height: '2.5rem' }} />}>
+  <SearchBar />
+</Suspense>
+```
+
+## generateMetadata
+
+- Toda page dinâmica deve ter `generateMetadata` com título descritivo
+
+```tsx
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { title } = await params
+  return {
+    title: `${decodeURIComponent(title)} — Kindle Vault`,
+  }
+}
+```
+
+## decodeURIComponent
+
+- Sempre dentro de try/catch em params de URL
+
+```tsx
+let bookTitle: string
+try {
+  bookTitle = decodeURIComponent(title)
+} catch {
+  notFound()
+}
+```
+
+## layout.tsx
+
+- `<html lang="pt-BR">` obrigatório
+- Fontes carregadas via `next/font/google` — nunca via `<link>` no head

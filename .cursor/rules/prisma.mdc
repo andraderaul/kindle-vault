@@ -1,0 +1,63 @@
+---
+description: Padrões para Prisma — singleton, migrations, SQLite, troubleshooting
+globs: src/lib/prisma.ts, "prisma/**/*
+alwaysApply: false
+---
+
+# Prisma — Padrões
+
+## Singleton obrigatório
+
+Nunca instanciar `new PrismaClient()` fora de `src/lib/prisma.ts`.
+O hot reload do Next.js cria múltiplas instâncias sem o singleton.
+
+```ts
+// src/lib/prisma.ts — único lugar onde PrismaClient é instanciado
+import { PrismaClient } from '@prisma/client'
+
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+
+export const prisma =
+  globalForPrisma.prisma ?? new PrismaClient({ log: ['error'] })
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+```
+
+## Limitações do SQLite
+
+- Sem `skipDuplicates: true` no `createMany`
+- Sem `mode: 'insensitive'` no `contains`
+- Sem transações distribuídas
+- `location` como `Int?` — ordenação numérica correta
+
+## Após mudar o schema
+
+```bash
+npx prisma migrate dev --name descricao_da_mudanca
+# migrate dev já chama generate, mas se os tipos não atualizarem:
+npx prisma generate
+# E reiniciar o TS Server no Cursor: Cmd+Shift+P → TypeScript: Restart TS Server
+```
+
+## database is locked
+
+```bash
+killall node
+rm -f prisma/dev.db-wal prisma/dev.db-shm
+npx prisma migrate dev
+```
+
+## Nunca usar Prisma em Edge Runtime
+
+Prisma usa APIs do Node.js — não funciona em `middleware.ts` ou routes com `export const runtime = 'edge'`.
+
+## Referência de comandos
+
+| Situação | Comando |
+|---|---|
+| Primeira vez | `npx prisma migrate dev --name init` |
+| Schema mudou | `npx prisma migrate dev --name descricao` |
+| Tipos errados | `npx prisma generate` |
+| Banco corrompido | `npx prisma migrate reset` |
+| Ver dados | `npx prisma studio` |
+| Banco travado | `killall node && rm -f prisma/dev.db-wal prisma/dev.db-shm` |

@@ -1,0 +1,63 @@
+---
+description: Padrões para hooks customizados — efeitos, deps, cleanup, Web Speech API
+globs: src/hooks/**/*.ts
+alwaysApply: false
+---
+
+# Hooks — Padrões
+
+## Regras gerais
+
+- Todo arquivo em `src/hooks/` é implicitamente client-side — não precisa de `'use client'` no arquivo do hook, mas o componente que usa o hook precisa
+- Um hook = uma responsabilidade
+- Retornar tupla `[value, setter] as const` para hooks que seguem o padrão de estado
+- Retornar objeto nomeado para hooks com múltiplos valores/métodos
+
+## useEffect
+
+- Sempre ter cleanup quando o efeito cria timers, subscriptions ou listeners
+- Array de dependências sempre completo — não suprimir warnings do Biome
+- Efeito que só lê valores não precisa de cleanup
+
+```ts
+// ❌ sem cleanup — timer continua após unmount
+useEffect(() => {
+  setTimeout(() => router.replace(...), 400)
+}, [query])
+
+// ✅ com cleanup
+useEffect(() => {
+  const timer = setTimeout(() => router.replace(...), DEBOUNCE_MS)
+  return () => clearTimeout(timer)
+}, [query, router, searchParams])
+```
+
+## useQueryParam
+
+- `router.replace` sempre com `{ scroll: false }`
+- `params.delete(key)` quando valor vazio — nunca `params.set(key, '')`
+- Guard antes de atualizar URL: só navega se o valor realmente mudou
+- Debounce com cleanup obrigatório
+
+```ts
+if (value === (params.get(key) ?? '')) return // sem mudança real
+```
+
+## useSpeech
+
+- Nunca enfileirar todos os utterances de uma vez no `synth`
+- Gerenciar fila manualmente via `onend` — chama o próximo bloco ao terminar o atual
+- `onerror` deve ignorar `canceled` e `interrupted` — são abortos voluntários, não erros
+
+```ts
+utterance.onerror = (e) => {
+  if (e.error === 'canceled' || e.error === 'interrupted') return
+  console.error('[useSpeech]', e.error)
+  setIsPlaying(false)
+}
+```
+
+- Carregar vozes com `voiceschanged` E chamar `getVoices()` imediatamente (Firefox já tem as vozes, Chrome carrega async)
+- Preferência por vozes `pt-BR`: Luciana → Google português do Brasil → qualquer pt-BR
+- Expor `currentIndex` para highlighting visual no componente pai
+- `stop()` deve chamar `synth.cancel()` e resetar `currentIndex` para -1

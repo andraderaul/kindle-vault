@@ -1,0 +1,193 @@
+---
+description: Padrões de internacionalização com Lingui.js — Trans, useLingui, msg, strings proibidas
+globs: src/**/*.tsx, src/**/*.ts, app/**/*.tsx
+alwaysApply: false
+---
+
+# Internacionalização — Lingui.js
+
+## Regra absoluta
+
+Nenhuma string visível ao usuário pode ser hardcoded.
+Isso inclui: texto de UI, placeholders, aria-labels, títulos, mensagens de erro e status.
+
+---
+
+## Qual API usar em cada contexto
+
+### Server Components — `getI18n` + `i18n._()`
+
+```tsx
+import { getI18n } from '@/lib/i18n'
+
+export default async function Page({ params }: Props) {
+  const { lang } = await params
+  const i18n = await getI18n(lang)
+
+  return <h1>{i18n._('Kindle Vault')}</h1>
+}
+```
+
+### Client Components — `useLingui` + `_()`
+
+```tsx
+'use client'
+import { useLingui } from '@lingui/react'
+import { Trans } from '@lingui/react/macro'
+
+export function SearchBar() {
+  const { _ } = useLingui()
+
+  return (
+    <>
+      {/* JSX visível — usar Trans */}
+      <label htmlFor="search"><Trans>Buscar highlights</Trans></label>
+
+      {/* Atributos de string — usar _() */}
+      <input
+        id="search"
+        placeholder={_('Buscar highlights por conteúdo...')}
+        aria-label={_('Buscar highlights por conteúdo')}
+      />
+    </>
+  )
+}
+```
+
+### Server Actions — `msg` para marcar sem traduzir
+
+Actions rodam no servidor sem contexto de locale.
+Usar `msg` para marcar — a tradução acontece no cliente ao exibir:
+
+```ts
+import { msg } from '@lingui/core/macro'
+
+// ❌ string hardcoded em action
+return { error: 'Nenhum arquivo enviado' }
+
+// ✅ marcada para extração
+const ERRORS = {
+  noFile: msg`Nenhum arquivo enviado`,
+  invalidJson: msg`JSON inválido`,
+}
+return { error: ERRORS.noFile }
+```
+
+---
+
+## Casos comuns
+
+### Texto JSX simples
+```tsx
+// ❌
+<p>Sua coleção literária pessoal</p>
+
+// ✅
+<p><Trans>Sua coleção literária pessoal</Trans></p>
+```
+
+### Texto com variável
+```tsx
+// ❌
+<span>{count} Highlights</span>
+
+// ✅
+<span><Trans>{count} Highlights</Trans></span>
+```
+
+### Texto com elementos internos
+```tsx
+// ❌ quebrar em partes
+<p>Você tem <strong>{count}</strong> highlights importados</p>
+
+// ✅ Trans suporta JSX interno
+<p><Trans>Você tem <strong>{count}</strong> highlights importados</Trans></p>
+```
+
+### aria-label em botões de ícone
+```tsx
+// ❌
+<button aria-label="Reproduzir">
+
+// ✅
+const { _ } = useLingui()
+<button aria-label={_('Reproduzir')}>
+```
+
+### Strings de status dinâmico
+```tsx
+// ❌
+`Lendo highlight ${currentIndex + 1} de ${total}`
+
+// ✅
+_('Lendo highlight {current} de {total}', { current: currentIndex + 1, total })
+```
+
+### Títulos de página (generateMetadata)
+```tsx
+// ❌
+title: `${decoded} — Kindle Vault`
+
+// ✅
+const i18n = await getI18n(lang)
+title: `${decoded} — ${i18n._('Kindle Vault')}`
+```
+
+---
+
+## O que NUNCA fazer
+
+```tsx
+// ❌ string hardcoded visível
+<button>Importar</button>
+<p>Nenhum highlight encontrado</p>
+<input placeholder="Buscar..." />
+<button aria-label="Fechar" />
+
+// ❌ concatenar strings traduzidas
+const msg = _('Olá') + ' ' + name  // quebra em idiomas com ordem diferente
+
+// ✅ interpolar dentro da string
+const msg = _('Olá {name}', { name })
+```
+
+---
+
+## Workflow obrigatório ao adicionar strings
+
+1. Marcar com `<Trans>` ou `_()` ou `msg`
+2. Rodar `npm run i18n:extract` — popula os `.po`
+3. Traduzir os `msgstr` vazios em `en/messages.po` e `es/messages.po`
+4. Rodar `npm run i18n:check` — confirma que não há strings faltando
+5. Rodar `npm run i18n:compile` antes de buildar
+
+```bash
+npm run i18n:extract   # extrai strings novas
+npm run i18n:check     # valida traduções completas
+npm run i18n:compile   # compila para uso em runtime
+```
+
+---
+
+## Source of Truth para locales
+
+Toda informação sobre locales (lista, tipo, default, helpers) vem de `src/config/locales.ts`.
+Nunca definir `LOCALES`, `type Locale` ou `DEFAULT_LOCALE` em outros arquivos.
+
+```ts
+// ❌
+const LOCALES = ['pt-BR', 'en', 'es'];
+
+// ✅
+import { LOCALES, type Locale } from '@/config/locales';
+```
+
+---
+
+## Locales suportados
+
+| Locale | Idioma | Status |
+|--------|--------|--------|
+| `pt-BR` | Português Brasil | sourceLocale — referência |
+| `en` | English | traduzir tudo |
+| `es` | Español | traduzir tudo |

@@ -1,0 +1,185 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-02-21 00:58-0300\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/app/[lang]/page.tsx:84
+msgid "{count, plural, one {# resultado para \"{query}\"} other {# resultados para \"{query}\"}}"
+msgstr "{count, plural, one {# result for \"{query}\"} other {# results for \"{query}\"}}"
+
+#: src/components/BookCard.tsx:35
+#~ msgid "{count} {0}"
+#~ msgstr "{count} {0}"
+
+#: src/components/ImportForm.tsx:69
+msgid "{imported} highlights importados com sucesso! ({skipped} ignorados)"
+msgstr "{imported} highlights successfully imported! ({skipped} skipped)"
+
+#: src/app/[lang]/book/[title]/page.tsx:55
+#: src/app/[lang]/import/page.tsx:21
+msgid "← Voltar ao cofre"
+msgstr "← Back to Vault"
+
+#: src/components/ImportForm.tsx:42
+msgid "Arquivo JSON inválido: {detail}"
+msgstr "Invalid JSON file: {detail}"
+
+#: src/components/SearchBar.tsx:17
+msgid "Buscar highlights por conteúdo"
+msgstr "Search highlights by content"
+
+#: src/components/SearchBar.tsx:23
+msgid "Buscar highlights por conteúdo..."
+msgstr "Search highlights by content..."
+
+#: src/components/AudioPlayer.tsx:111
+msgid "Configurações"
+msgstr "Settings"
+
+#: src/components/ImportForm.tsx:92
+msgid "Enviar JSON de highlights"
+msgstr "Upload Highlights JSON"
+
+#: src/lib/actions.ts:17
+msgid "Erro ao salvar no banco. Tente novamente."
+msgstr "Failed to save to database. Please try again."
+
+#: src/components/ImportForm.tsx:96
+msgid "Exporte seus highlights para JSON e envie aqui. Deve ser um array de objetos com bookTitle, author, text e location (opcional)."
+msgstr "Export your highlights to JSON and upload them here. Must contain an array of objects with bookTitle, author, text, and location (optional)."
+
+#: src/lib/actions.ts:18
+msgid "Falha ao excluir"
+msgstr "Failed to delete"
+
+#: src/components/BookCard.tsx:24
+msgid "Highlight"
+msgstr "Highlight"
+
+#: src/components/BookCard.tsx:24
+msgid "Highlights"
+msgstr "Highlights"
+
+#: src/components/ImportForm.tsx:145
+msgid "Importando..."
+msgstr "Importing..."
+
+#: src/app/[lang]/page.tsx:40
+msgid "Importar"
+msgstr "Import"
+
+#: src/app/[lang]/import/page.tsx:24
+msgid "Importar Highlights"
+msgstr "Import Highlights"
+
+#: src/components/ImportForm.tsx:145
+msgid "Importar para o cofre"
+msgstr "Import to Vault"
+
+#: src/components/ImportForm.tsx:39
+#: src/lib/actions.ts:14
+msgid "JSON inválido"
+msgstr "Invalid JSON"
+
+#: src/app/[lang]/book/[title]/page.tsx:25
+#: src/app/[lang]/page.tsx:31
+msgid "Kindle Vault"
+msgstr "Kindle Vault"
+
+#: src/components/AudioPlayer.tsx:61
+msgid "Lendo highlight {current} de {total}"
+msgstr "Reading highlight {current} of {total}"
+
+#: src/components/BookCard.tsx:42
+msgid "Ler →"
+msgstr "Read →"
+
+#: src/components/HighlightCard.tsx:28
+msgid "Ler highlight"
+msgstr "Read highlight"
+
+#: src/app/[lang]/page.tsx:111
+msgid "Livro →"
+msgstr "Book →"
+
+#: src/lib/actions.ts:13
+msgid "Nenhum arquivo enviado"
+msgstr "No file uploaded"
+
+#: src/app/[lang]/page.tsx:91
+msgid "Nenhum highlight encontrado para sua busca."
+msgstr "No highlights found matching your search."
+
+#: src/lib/actions.ts:16
+msgid "Nenhum highlight válido encontrado"
+msgstr "No valid highlights found"
+
+#: src/lib/actions.ts:15
+msgid "O JSON deve ser um array"
+msgstr "The JSON must be an array"
+
+#: src/components/ImportForm.tsx:35
+msgid "O JSON não é um array."
+msgstr "JSON is not an array."
+
+#: src/components/AudioPlayer.tsx:166
+msgid "Outras vozes"
+msgstr "Other Voices"
+
+#: src/components/AudioPlayer.tsx:97
+msgid "Pausar"
+msgstr "Pause"
+
+#: src/components/HighlightCard.tsx:28
+msgid "Pausar highlight"
+msgstr "Pause highlight"
+
+#: src/components/AudioPlayer.tsx:159
+msgid "Português (BR)"
+msgstr "Portuguese (BR)"
+
+#: src/components/ImportForm.tsx:132
+msgid "Prévia (primeiros {count})"
+msgstr "Preview (first {count})"
+
+#: src/components/AudioPlayer.tsx:80
+msgid "Recomeçar"
+msgstr "Restart"
+
+#: src/components/AudioPlayer.tsx:97
+msgid "Reproduzir"
+msgstr "Play"
+
+#: src/app/[lang]/page.tsx:59
+msgid "Seu cofre está vazio. Importe alguns highlights para começar."
+msgstr "Your vault is empty. Import some highlights to begin."
+
+#: src/app/[lang]/page.tsx:34
+msgid "Sua coleção literária pessoal"
+msgstr "Your personal literary collection"
+
+#: src/components/AudioPlayer.tsx:124
+msgid "Velocidade"
+msgstr "Speed"
+
+#: src/components/AudioPlayer.tsx:146
+msgid "Voz"
+msgstr "Voice"
+
+#: src/components/LanguageSwitcher.tsx:48
+msgid "Seletor de idioma"
+msgstr "Language selector"
+
+#: src/components/LanguageSwitcher.tsx:58
+msgid "Mudar idioma para {label}"
+msgstr "Switch language to {label}"

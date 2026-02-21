@@ -1,0 +1,62 @@
+---
+description: Padrões para queries Prisma — separação, tipos, ordenação, SQLite
+globs: src/lib/queries.ts
+alwaysApply: false
+---
+
+# Queries — Padrões
+
+## Separação obrigatória
+
+- Queries ficam em `src/lib/queries.ts` — nunca dentro de Server Actions ou componentes
+- Server Actions chamam queries, não constroem queries
+
+## Tipagem
+
+- Retorno das queries sempre tipado explicitamente ou inferido corretamente pelo Prisma
+- Sem `any` — o Prisma já gera tipos precisos, usar sempre
+
+## Ordenação com SQLite
+
+- `location` é `Int?` — ordenação numérica funciona corretamente
+- Sempre usar fallback com `createdAt` para highlights sem location
+
+```ts
+// ✅
+orderBy: [
+  { location: 'asc' },   // Int — ordenação numérica correta
+  { createdAt: 'asc' },  // fallback para highlights sem location
+]
+```
+
+## Busca case-insensitive no SQLite
+
+- Não usar `mode: 'insensitive'` — não suportado no SQLite
+- SQLite já faz busca case-insensitive em ASCII por padrão
+
+```ts
+// ❌ quebra no SQLite
+where: { text: { contains: query, mode: 'insensitive' } }
+
+// ✅
+where: { text: { contains: query } }
+```
+
+## Select seletivo
+
+- Não buscar campos desnecessários — usar `select` quando não precisar de tudo
+
+```ts
+// ❌ busca todos os campos incluindo text longo
+const books = await prisma.highlight.groupBy({ by: ['bookTitle', 'author'] })
+
+// ✅ só o necessário para a listagem
+const highlights = await prisma.highlight.findMany({
+  select: { id: true, bookTitle: true, author: true, location: true, createdAt: true }
+  // sem `text` — não precisa na listagem de livros
+})
+```
+
+## Prisma singleton
+
+- Sempre importar `prisma` de `@/lib/prisma` — nunca instanciar `new PrismaClient()` fora do singleton

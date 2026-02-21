@@ -1,0 +1,92 @@
+---
+description: Stack, convenções globais e padrões do projeto Kindle Vault
+alwaysApply: true
+---
+
+# Kindle Vault — Convenções Globais
+
+## Stack
+
+- Next.js 15 com App Router — nunca usar Pages Router
+- TypeScript strict — sem `any` explícito ou implícito
+- TailwindCSS v4 — configuração via `@theme` no CSS, sem `tailwind.config.js`
+- Prisma com SQLite — singleton obrigatório em `src/lib/prisma.ts`
+- Biome — linter e formatter, nunca ESLint ou Prettier
+
+## TypeScript
+
+- `strict: true` sempre
+- Sem `any` — usar `unknown` com narrowing explícito
+- Sem `as` para forçar tipos — preferir type guards
+- Funções com retorno não óbvio devem ter tipo de retorno explícito
+- Tipos compartilhados entre arquivos vão em `src/types/`
+
+```ts
+// ❌
+const parsed = JSON.parse(raw)
+
+// ✅
+const parsed: unknown = JSON.parse(raw)
+if (!Array.isArray(parsed)) return { error: 'inválido' }
+```
+
+## Exportações
+
+- Sempre named exports — nunca default export
+- Barrel exports via `index.ts` em pastas com múltiplos arquivos
+
+## Imports
+
+Ordem obrigatória:
+1. Externos (`react`, `next`, pacotes npm)
+2. Internos com alias (`@/lib/...`, `@/components/...`)
+3. Relativos (`./algo`)
+
+## Classes CSS
+
+- Sempre usar `cn` de `@/lib/cn` para classes condicionais
+- Nunca interpolar classes com template string
+
+```tsx
+// ❌
+<div className={`p-4 ${isActive ? 'bg-yellow-50' : ''}`} />
+
+// ✅
+<div className={cn('p-4', isActive && 'bg-yellow-50')} />
+```
+
+
+## Chaves em condicionais — sempre obrigatórias
+
+Nunca omitir chaves em `if`, mesmo para retornos de uma linha:
+
+```ts
+// ❌
+if (condition) return foo
+if (!value) throw new Error('...')
+
+// ✅
+if (condition) {
+  return foo
+}
+if (!value) {
+  throw new Error('...')
+}
+```
+
+Motivo: consistência visual, diff mais limpo no git, e evita bugs ao adicionar uma segunda linha depois.
+
+---
+
+## Magic numbers
+
+- Extrair constantes nomeadas para valores com significado
+
+```ts
+// ❌
+setTimeout(() => {}, 400)
+
+// ✅
+const DEBOUNCE_MS = 400
+setTimeout(() => {}, DEBOUNCE_MS)
+```

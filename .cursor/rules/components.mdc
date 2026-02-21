@@ -1,0 +1,84 @@
+---
+description: Padrões para componentes React — Server vs Client, ícones, acessibilidade, cn
+globs: src/components/**/*.tsx
+alwaysApply: false
+---
+
+# Componentes — Padrões
+
+## Server vs Client Component
+
+- Server Component por padrão — sem `'use client'` a menos que necessário
+- Client Component apenas quando usar: hooks, eventos, browser APIs, estado
+- Nunca importar `prisma` ou chamar queries dentro de Client Components
+
+```tsx
+// ❌ query dentro de Client Component
+'use client'
+const data = await prisma.highlight.findMany() // erro em runtime
+
+// ✅ query no Server Component, dados passados como props
+export default async function Page() {
+  const highlights = await getHighlightsByBook(title)
+  return <HighlightList highlights={highlights} />
+}
+```
+
+## Props
+
+- Sempre tipadas com `type` (não `interface` para props de componente)
+- Props opcionais com `?`, nunca `| undefined` explícito
+- Componentes que aceitam override de classe devem ter `className?: string`
+
+```tsx
+type HighlightCardProps = {
+  highlight: Highlight
+  isActive: boolean
+  wasRead: boolean
+  onClick: () => void
+  className?: string
+}
+```
+
+## Classes condicionais
+
+- Sempre usar `cn` de `@/lib/cn`
+- `className` externo sempre por último no `cn` para permitir override
+
+```tsx
+import { cn } from '@/lib/cn'
+
+<div className={cn(
+  'p-4 border-l-2 transition-all',           // base
+  isActive && 'bg-highlight-bg border-gold', // condicional
+  wasRead && 'opacity-50',                   // condicional
+  className                                  // override externo — sempre último
+)} />
+```
+
+## Ícones
+
+- Nunca SVG inline dentro de componentes
+- Sempre importar de `@/components/icons`
+- Botões de ícone sempre com `aria-label`
+
+```tsx
+// ❌
+<button onClick={handlePlay}>
+  <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+</button>
+
+// ✅
+import { PlayIcon } from '@/components/icons'
+
+<button onClick={handlePlay} aria-label="Reproduzir">
+  <PlayIcon size={20} />
+</button>
+```
+
+## Acessibilidade
+
+- Botões de ícone: `aria-label` obrigatório
+- SVGs decorativos: `aria-hidden={true}`
+- Inputs: sempre com `label` associado via `htmlFor`
+- Ordem de foco com Tab deve ser lógica e sequencial

@@ -1,0 +1,83 @@
+---
+description: Padrões para Server Actions — validação, tipos, retorno estruturado
+globs: src/lib/actions.ts
+alwaysApply: false
+---
+
+# Server Actions — Padrões
+
+## Obrigatório
+
+- `'use server'` na primeira linha do arquivo
+- Nunca importar módulos client-only (`window`, `document`, Web Speech API)
+- Nunca fazer `throw` cru para o cliente — sempre retornar objeto estruturado
+- Nunca usar `any` — tipar todos os inputs com `unknown` e fazer narrowing
+
+## Validação de input
+
+Todo input externo (FormData, JSON) deve ser validado antes de tocar no banco:
+
+```ts
+// Tipo explícito do dado esperado
+type HighlightInput = {
+  bookTitle: string
+  author: string
+  text: string
+  location?: string | number
+}
+
+// Type guard com narrowing explícito
+function isValidHighlight(item: unknown): item is HighlightInput {
+  if (typeof item !== 'object' || item === null) return false
+  const h = item as Record<string, unknown>
+  return (
+    typeof h.bookTitle === 'string' && h.bookTitle.trim().length > 0 &&
+    typeof h.author === 'string' && h.author.trim().length > 0 &&
+    typeof h.text === 'string' && h.text.trim().length > 0
+  )
+}
+```
+
+## Retorno estruturado
+
+Actions retornam um objeto discriminado — nunca void, nunca throw:
+
+```ts
+type ActionResult =
+  | { success: true; imported: number; skipped: number }
+  | { error: string }
+
+export async function importHighlights(formData: FormData): Promise<ActionResult> {
+  // ...
+  try {
+    await prisma.highlight.createMany({ data })
+    return { success: true, imported: valid.length, skipped }
+  } catch (e) {
+    console.error('[importHighlights]', e)
+    return { error: 'Erro ao salvar no banco' }
+  }
+}
+```
+
+## Prisma com SQLite
+
+- Nunca usar `skipDuplicates: true` — não suportado no SQLite
+- Usar `createMany` em vez de loop de `create`
+- JSON parse sempre dentro de try/catch
+
+## decodeURIComponent
+
+Sempre dentro de try/catch — URL com encoding inválido explode em runtime:
+
+```ts
+// ❌
+const title = decodeURIComponent(params.title)
+
+// ✅
+let title: string
+try {
+  title = decodeURIComponent(params.title)
+} catch {
+  notFound()
+}
+```

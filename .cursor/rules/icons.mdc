@@ -1,0 +1,83 @@
+---
+description: Padrões para ícones SVG — sempre componentes, nunca inline
+globs: src/components/icons/**/*.tsx, src/components/**/*.tsx
+alwaysApply: false
+---
+
+# Ícones — Padrões
+
+## Regra absoluta
+
+Nunca escrever SVG inline dentro de componentes React.
+Todo ícone é um componente em `src/components/icons/`.
+
+## Estrutura
+
+```
+src/components/icons/
+├── index.ts          ← barrel export
+├── PlayIcon.tsx
+├── PauseIcon.tsx
+├── StopIcon.tsx
+├── RestartIcon.tsx
+└── ...
+```
+
+## Padrão de implementação
+
+```tsx
+// src/components/icons/PlayIcon.tsx
+
+type IconProps = {
+  className?: string
+  size?: number
+  'aria-hidden'?: boolean
+}
+
+export function PlayIcon({ className, size = 16, 'aria-hidden': ariaHidden = true }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="currentColor"
+      className={className}
+      aria-hidden={ariaHidden}
+    >
+      <path d="..." />
+    </svg>
+  )
+}
+```
+
+Regras:
+- `fill="currentColor"` sempre — herda cor do CSS pai
+- `aria-hidden={true}` por padrão — ícone é decorativo
+- `size` como número — não usar classes Tailwind dentro do ícone
+- Named export, nunca default
+
+## Uso correto
+
+```tsx
+import { PlayIcon } from '@/components/icons'
+
+// ❌ botão sem label
+<button onClick={play}>
+  <PlayIcon size={20} />
+</button>
+
+// ✅ botão com aria-label
+<button onClick={play} aria-label="Reproduzir">
+  <PlayIcon size={20} />
+</button>
+```
+
+## Barrel export
+
+Todo ícone novo deve ser adicionado ao `src/components/icons/index.ts`:
+
+```ts
+export { PlayIcon } from './PlayIcon'
+export { PauseIcon } from './PauseIcon'
+// ...
+```
