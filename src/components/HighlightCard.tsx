@@ -47,7 +47,7 @@ export function HighlightCard({
           </p>
           {highlight.location != null && (
             <div className="mt-4 text-xs text-fade/70 uppercase tracking-widest font-mono">
-              Lok. {highlight.location}
+              {_(msg`Lok. {location}`, { location: highlight.location })}
             </div>
           )}
         </div>

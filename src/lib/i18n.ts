@@ -16,5 +16,6 @@ export const getI18n = cache(async (locale: string) => {
     messages: { [safeLocale]: messages },
   });
 
+  // Dynamic import path prevents TypeScript from inferring Messages; cast is required.
   return { i18n, messages: messages as Messages };
 });

@@ -1,10 +1,9 @@
-import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { BookCard } from '@/components/BookCard';
 import { SearchBar } from '@/components/SearchBar';
-import { getI18n } from '@/lib/i18n';
+import { SearchResultsSection } from '@/components/SearchResultsSection';
 import { initLingui } from '@/lib/initLingui';
 import { getBooksGrouped, searchHighlights } from '@/lib/queries';
 
@@ -16,7 +15,6 @@ type Props = {
 export default async function Home({ params, searchParams }: Props) {
   const { lang } = await params;
   await initLingui(lang);
-  const { i18n } = await getI18n(lang);
 
   const { q } = await searchParams;
   const isSearch = !!q;
@@ -78,47 +76,11 @@ export default async function Home({ params, searchParams }: Props) {
       )}
 
       {isSearch && (
-        <div className="mt-8 animate-fade-in-up">
-          <h2 className="font-playfair text-2xl mb-6 text-ink">
-            {i18n._({
-              ...msg`{count, plural, one {# resultado para "{query}"} other {# resultados para "{query}"}}`,
-              values: {
-                count: searchResults.length,
-                query: q ?? '',
-              },
-            })}
-          </h2>
-
-          {searchResults.length === 0 ? (
-            <p className="text-fade italic font-crimson">
-              <Trans>Nenhum highlight encontrado para sua busca.</Trans>
-            </p>
-          ) : (
-            <div className="space-y-6">
-              {searchResults.map((highlight) => (
-                <div
-                  key={highlight.id}
-                  className="p-6 rounded-md border border-fade/10 bg-paper-dark relative"
-                >
-                  <p className="font-crimson text-ink text-lg leading-relaxed mb-8">
-                    {highlight.text}
-                  </p>
-                  <div className="absolute bottom-4 left-6 right-6 flex justify-between items-center text-xs">
-                    <span className="text-fade uppercase tracking-wider font-mono">
-                      {highlight.bookTitle} • Lok. {highlight.location || 'N/A'}
-                    </span>
-                    <Link
-                      href={`/${lang}/book/${encodeURIComponent(highlight.bookTitle)}`}
-                      className="text-gold hover:text-gold-light uppercase tracking-widest"
-                    >
-                      <Trans>Livro →</Trans>
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <SearchResultsSection
+          searchResults={searchResults}
+          query={q ?? ''}
+          lang={lang}
+        />
       )}
     </main>
   );

@@ -12,7 +12,7 @@ function getLocale(request: NextRequest): string {
   const preferred = acceptLanguage.split(',')[0]?.split('-')[0];
 
   if (preferred === 'pt') {
-    return 'pt-BR';
+    return DEFAULT_LOCALE;
   }
   if (preferred === 'es') {
     return 'es';

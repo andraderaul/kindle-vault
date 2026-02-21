@@ -1,6 +1,6 @@
 ---
 description: Padrões de internacionalização com Lingui.js — Trans, useLingui, msg, strings proibidas
-globs: src/**/*.tsx, src/**/*.ts, app/**/*.tsx
+globs: src/**/*.tsx, src/**/*.ts, src/app/**/*.tsx
 alwaysApply: false
 ---
 
@@ -28,7 +28,7 @@ export default async function Page({ params }: Props) {
 }
 ```
 
-### Client Components — `useLingui` + `_()`
+### Client Components — `useLingui` + `_()` ou `i18n._()`
 
 ```tsx
 'use client'
@@ -52,6 +52,40 @@ export function SearchBar() {
     </>
   )
 }
+```
+
+### Client Components — `msg` com variáveis: usar `i18n._()`
+
+Quando usar o macro `msg` com placeholders em Client Components, chamar `i18n._()` (não `_()`) e passar um descriptor com `values`, para evitar erros de tipo. Nunca usar `@ts-expect-error` para Lingui.
+
+```tsx
+'use client'
+import { msg } from '@lingui/core/macro'
+import { useLingui } from '@lingui/react'
+
+export function Example() {
+  const { i18n } = useLingui()
+
+  // ✅ mensagem com variáveis — descriptor + values
+  i18n._({
+    ...msg`Prévia (primeiros {count})`,
+    values: { count: 3 },
+  })
+
+  // ✅ mensagem sem variáveis
+  i18n._(msg`Sem localização`)
+
+  // ✅ MessageDescriptor recebido (ex.: erro de action) — mesclar values ao exibir
+  i18n._({
+    ...descriptor,
+    values: { ...(descriptor.values ?? {}), ...params },
+  })
+}
+```
+
+```tsx
+// ❌ evita — exige @ts-expect-error e quebra tipos
+_(msg`Prévia (primeiros {count})`, { count: 3 })
 ```
 
 ### Server Actions — `msg` para marcar sem traduzir

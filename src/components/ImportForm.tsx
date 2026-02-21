@@ -1,5 +1,6 @@
 'use client';
 
+import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
@@ -11,8 +12,17 @@ import { parseClippings } from '@/lib/parsers/clippings';
 
 type ImportTab = 'clippings' | 'json';
 
+type MessageState =
+  | { type: 'success'; text: string }
+  | {
+      type: 'error';
+      descriptor: MessageDescriptor;
+      params?: Record<string, number | string>;
+    }
+  | { type: 'error'; text: string };
+
 export function ImportForm() {
-  const { _ } = useLingui();
+  const { i18n, _ } = useLingui();
   const clippingsInputRef = useRef<HTMLInputElement>(null);
   const jsonInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<ImportTab>('clippings');
@@ -20,11 +30,7 @@ export function ImportForm() {
   const [preview, setPreview] = useState<unknown[] | null>(null);
   const [clippingsCount, setClippingsCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{
-    type: 'success' | 'error';
-    text: string;
-    params?: Record<string, number | string>;
-  } | null>(null);
+  const [message, setMessage] = useState<MessageState | null>(null);
 
   const switchTab = (tab: ImportTab) => {
     setActiveTab(tab);
@@ -84,17 +90,22 @@ export function ImportForm() {
       if (Array.isArray(json)) {
         setPreview(json.slice(0, 3));
       } else {
-        setMessage({ type: 'error', text: _(msg`O JSON não é um array.`) });
+        setMessage({
+          type: 'error',
+          text: _(msg`O JSON não é um array.`),
+        });
         setPreview(null);
       }
     } catch (err: unknown) {
-      const detail = err instanceof Error ? err.message : _(msg`JSON inválido`);
+      const detail =
+        err instanceof Error ? err.message : i18n._(msg`JSON inválido`);
       setMessage({
         type: 'error',
-        // Lingui _() accepts msg at runtime; types are stricter than runtime
         text: String(
-          // @ts-expect-error Lingui macro msg is valid for _() at runtime
-          _(msg`Arquivo JSON inválido: {detail}`, { detail }),
+          i18n._({
+            ...msg`Arquivo JSON inválido: {detail}`,
+            values: { detail },
+          }),
         ),
       });
       setPreview(null);
@@ -122,18 +133,20 @@ export function ImportForm() {
     if ('error' in result) {
       setMessage({
         type: 'error',
-        text: result.error,
+        descriptor: result.error,
         params: result.errorParams,
       });
     } else {
       setMessage({
         type: 'success',
         text: String(
-          _(
-            // @ts-expect-error Lingui macro msg is valid for _() at runtime
-            msg`{imported} highlights importados com sucesso! ({skipped} ignorados)`,
-            { imported: result.imported, skipped: result.skipped },
-          ),
+          i18n._({
+            ...msg`{imported} highlights importados com sucesso! ({skipped} ignorados)`,
+            values: {
+              imported: result.imported,
+              skipped: result.skipped,
+            },
+          }),
         ),
       });
       setFile(null);
@@ -292,7 +305,15 @@ export function ImportForm() {
             )}
           >
             {message.type === 'error'
-              ? _(message.text, message.params ?? {})
+              ? 'descriptor' in message
+                ? i18n._({
+                    ...message.descriptor,
+                    values: {
+                      ...(message.descriptor.values as Record<string, unknown>),
+                      ...message.params,
+                    },
+                  })
+                : message.text
               : message.text}
           </div>
         )}
@@ -301,9 +322,9 @@ export function ImportForm() {
           <div className="bg-paper p-4 rounded border border-fade/10">
             <h3 className="text-xs font-bold uppercase tracking-wider text-fade mb-2">
               {String(
-                // @ts-expect-error Lingui macro msg is valid for _() at runtime
-                _(msg`Prévia (primeiros {count})`, {
-                  count: Math.min(3, clippingsCount),
+                i18n._({
+                  ...msg`Prévia (primeiros {count})`,
+                  values: { count: Math.min(3, clippingsCount) },
                 }),
               )}
             </h3>
@@ -328,7 +349,7 @@ export function ImportForm() {
               </ul>
             ) : (
               <p className="text-fade text-sm">
-                {String(_(msg`Nenhum highlight encontrado no arquivo`))}
+                {String(i18n._(msg`Nenhum highlight encontrado no arquivo`))}
               </p>
             )}
           </div>
@@ -338,8 +359,10 @@ export function ImportForm() {
           <div className="bg-paper p-4 rounded border border-fade/10">
             <h3 className="text-xs font-bold uppercase tracking-wider text-fade mb-2">
               {String(
-                // @ts-expect-error Lingui macro msg is valid for _() at runtime
-                _(msg`Prévia (primeiros {count})`, { count: preview.length }),
+                i18n._({
+                  ...msg`Prévia (primeiros {count})`,
+                  values: { count: preview.length },
+                }),
               )}
             </h3>
             <pre className="text-[10px] overflow-auto max-h-40 text-ink/80 font-mono">

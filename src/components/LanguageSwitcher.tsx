@@ -2,7 +2,7 @@
 
 import { useLingui } from '@lingui/react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { LOCALES, type Locale } from '@/config/locales';
+import { getSafeLocale, LOCALES, type Locale } from '@/config/locales';
 import { cn } from '@/lib/cn';
 
 const COOKIE_MAX_AGE_ONE_YEAR_SECONDS = 31536000;
@@ -13,7 +13,7 @@ export function LanguageSwitcher() {
   const pathname = usePathname();
   const params = useParams();
 
-  const currentLang = params.lang as Locale;
+  const currentLang = getSafeLocale(String(params.lang));
 
   function switchLocale(locale: Locale) {
     if (locale === currentLang) {

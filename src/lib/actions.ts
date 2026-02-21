@@ -1,5 +1,6 @@
 'use server';
 
+import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { revalidatePath } from 'next/cache';
 import { LOCALE_ROOTS } from '@/config/locales';
@@ -9,7 +10,10 @@ import { prisma } from './prisma';
 
 export type ImportResult =
   | { success: true; imported: number; skipped: number }
-  | { error: string; errorParams?: Record<string, number | string> };
+  | {
+      error: MessageDescriptor;
+      errorParams?: Record<string, number | string>;
+    };
 
 // Mark strings for Lingui extraction; the client translates when displaying
 const ERRORS = {
@@ -29,7 +33,7 @@ void ERRORS; // reference for extraction
 
 export type DeleteHighlightResult =
   | { success: true }
-  | { error: 'deleteFailed'; detail?: string };
+  | { error: MessageDescriptor };
 
 type HighlightInput = {
   bookTitle: string;
@@ -57,15 +61,17 @@ function isValidHighlight(item: unknown): item is HighlightInput {
 export async function importHighlights(
   formData: FormData,
 ): Promise<ImportResult> {
-  const file = formData.get('file') as File;
-  if (!file) {
-    return { error: 'Nenhum arquivo enviado' };
+  const rawFile = formData.get('file');
+  if (!(rawFile instanceof File)) {
+    return { error: ERRORS.noFile };
   }
+  const file = rawFile;
+
   if (file.size > UPLOAD_CONFIG.maxFileSizeBytes) {
-    return { error: 'Arquivo muito grande. O limite é 5MB.' };
+    return { error: ERRORS.fileTooBig };
   }
   if (!UPLOAD_CONFIG.allowedTypesJson.includes(file.type)) {
-    return { error: 'Tipo de arquivo inválido. Envie um arquivo .json' };
+    return { error: ERRORS.invalidTypeJson };
   }
 
   const raw = await file.text();
@@ -74,22 +80,21 @@ export async function importHighlights(
   try {
     parsed = JSON.parse(raw);
   } catch {
-    return { error: 'JSON inválido' };
+    return { error: ERRORS.invalidJson };
   }
 
   if (!Array.isArray(parsed)) {
-    return { error: 'O JSON deve ser um array' };
+    return { error: ERRORS.notArray };
   }
   const valid = parsed.filter(isValidHighlight);
   const skipped = parsed.length - valid.length;
 
   if (valid.length === 0) {
-    return { error: 'Nenhum highlight válido encontrado' };
+    return { error: ERRORS.noValid };
   }
   if (valid.length > UPLOAD_CONFIG.maxHighlightsPerImport) {
     return {
-      error:
-        'Arquivo contém muitos highlights. O limite por importação é {limit}.',
+      error: ERRORS.tooManyHighlights,
       errorParams: { limit: UPLOAD_CONFIG.maxHighlightsPerImport },
     };
   }
@@ -106,7 +111,7 @@ export async function importHighlights(
     });
   } catch (e) {
     console.error('[importHighlights]', e);
-    return { error: 'Erro ao salvar no banco. Tente novamente.' };
+    return { error: ERRORS.dbError };
   }
 
   for (const root of LOCALE_ROOTS) {
@@ -118,27 +123,28 @@ export async function importHighlights(
 export async function importClippings(
   formData: FormData,
 ): Promise<ImportResult> {
-  const file = formData.get('file') as File;
-  if (!file) {
-    return { error: 'Nenhum arquivo enviado' };
+  const rawFile = formData.get('file');
+  if (!(rawFile instanceof File)) {
+    return { error: ERRORS.noFile };
   }
+  const file = rawFile;
+
   if (file.size > UPLOAD_CONFIG.maxFileSizeBytes) {
-    return { error: 'Arquivo muito grande. O limite é 5MB.' };
+    return { error: ERRORS.fileTooBig };
   }
   if (!UPLOAD_CONFIG.allowedTypesTxt.includes(file.type)) {
-    return { error: 'Tipo de arquivo inválido. Envie um arquivo .txt' };
+    return { error: ERRORS.invalidTypeTxt };
   }
 
   const raw = await file.text();
   const highlights = parseClippings(raw);
 
   if (highlights.length === 0) {
-    return { error: 'Nenhum highlight encontrado no arquivo' };
+    return { error: ERRORS.noClippings };
   }
   if (highlights.length > UPLOAD_CONFIG.maxHighlightsPerImport) {
     return {
-      error:
-        'Arquivo contém muitos highlights. O limite por importação é {limit}.',
+      error: ERRORS.tooManyHighlights,
       errorParams: { limit: UPLOAD_CONFIG.maxHighlightsPerImport },
     };
   }
@@ -154,7 +160,7 @@ export async function importClippings(
     });
   } catch (e) {
     console.error('[importClippings]', e);
-    return { error: 'Erro ao salvar no banco. Tente novamente.' };
+    return { error: ERRORS.dbError };
   }
 
   for (const root of LOCALE_ROOTS) {
@@ -172,10 +178,7 @@ export async function deleteHighlight(
       revalidatePath(root);
     }
     return { success: true };
-  } catch (err: unknown) {
-    return {
-      error: 'deleteFailed',
-      detail: err instanceof Error ? err.message : undefined,
-    };
+  } catch {
+    return { error: ERRORS.deleteFailed };
   }
 }

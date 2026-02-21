@@ -75,6 +75,23 @@ try {
 }
 ```
 
+## export default — exceção obrigatória do App Router
+
+`page.tsx` e `layout.tsx` do Next.js App Router exigem `export default`.
+Esta é a única exceção à regra de named exports do projeto.
+
+```tsx
+// ✅ obrigatório no App Router
+export default function Page() { ... }
+export default function Layout() { ... }
+
+// ✅ em todo o resto — named export
+export function MyComponent() { ... }
+export function useMyHook() { ... }
+```
+
+---
+
 Adicionar no final do arquivo, após a última seção existente:
 
 ```md
