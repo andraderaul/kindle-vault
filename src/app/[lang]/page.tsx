@@ -80,10 +80,13 @@ export default async function Home({ params, searchParams }: Props) {
       {isSearch && (
         <div className="mt-8 animate-fade-in-up">
           <h2 className="font-playfair text-2xl mb-6 text-ink">
-            {i18n._(
-              msg`{count, plural, one {# resultado para "{query}"} other {# resultados para "{query}"}}`,
-              { count: searchResults.length, query: q ?? '' },
-            )}
+            {i18n._({
+              ...msg`{count, plural, one {# resultado para "{query}"} other {# resultados para "{query}"}}`,
+              values: {
+                count: searchResults.length,
+                query: q ?? '',
+              },
+            })}
           </h2>
 
           {searchResults.length === 0 ? (
