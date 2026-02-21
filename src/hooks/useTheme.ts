@@ -34,9 +34,15 @@ export function useTheme() {
 
   useEffect(() => {
     const saved = getCookieTheme();
-    const resolved = saved ?? getSystemTheme();
-    setTheme(resolved);
-    applyTheme(resolved);
+
+    if (saved) {
+      setTheme(saved);
+      return;
+    }
+
+    const system = getSystemTheme();
+    setTheme(system);
+    applyTheme(system);
   }, []);
 
   function toggleTheme(): void {
