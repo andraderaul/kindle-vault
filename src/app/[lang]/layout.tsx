@@ -75,7 +75,7 @@ export default async function LangLayout({ children, params }: Props) {
           initialLocale={safeLocale}
           initialMessages={messages}
         >
-          <div className="fixed top-4 right-6 z-1000 flex items-center gap-3">
+          <div className="fixed top-4 right-6 z-[1000] flex items-center gap-3">
             <ThemeToggle />
             <div className="w-px h-4 bg-fade/30" aria-hidden />
             <LanguageSwitcher />
