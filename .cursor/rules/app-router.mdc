@@ -75,7 +75,42 @@ try {
 }
 ```
 
+Adicionar no final do arquivo, após a última seção existente:
+
+```md
+---
+
+## Dark Mode — FOUC de navegação vs primeira carga
+
+São dois problemas distintos com causas e fixes diferentes:
+
+**FOUC de primeira carga** — resolvido por script anti-FOUC síncrono no `<head>`:
+```ts
+// src/app/layout.tsx
+<script dangerouslySetInnerHTML={{ __html: themeScript }} />
+```
+
+**FOUC de navegação** (flash ao trocar de rota) — resolvido lendo o cookie
+no servidor e aplicando a classe `dark` diretamente no `<html>`:
+```tsx
+// src/app/layout.tsx
+import { cookies } from 'next/headers'
+
+const cookieStore = await cookies()
+const isDark = cookieStore.get('THEME')?.value === 'dark'
+
+<html className={isDark ? 'dark' : ''} suppressHydrationWarning>
+```
+
+O root layout não é recriado entre navegações — a classe `dark` persiste
+em todas as rotas sem depender do cliente.
+
+`suppressHydrationWarning` é obrigatório no `<html>` porque o servidor
+não conhece `prefers-color-scheme` — pode haver diferença entre
+o HTML do servidor e o estado do cliente na primeira visita.
+```
+
 ## layout.tsx
 
-- `<html lang="pt-BR">` obrigatório
+- `<html lang={DEFAULT_LOCALE}  className={isDark ? 'dark' : ''}>` obrigatório
 - Fontes carregadas via `next/font/google` — nunca via `<link>` no head
