@@ -3,6 +3,7 @@
 import { msg } from '@lingui/core/macro';
 import { revalidatePath } from 'next/cache';
 import { LOCALE_ROOTS } from '@/config/locales';
+import { parseClippings } from '@/lib/parsers/clippings';
 import { prisma } from './prisma';
 
 export type ImportResult =
@@ -15,6 +16,7 @@ const ERRORS = {
   invalidJson: msg`JSON inválido`,
   notArray: msg`O JSON deve ser um array`,
   noValid: msg`Nenhum highlight válido encontrado`,
+  noClippings: msg`Nenhum highlight encontrado no arquivo`,
   dbError: msg`Erro ao salvar no banco. Tente novamente.`,
   deleteFailed: msg`Falha ao excluir`,
 } as const;
@@ -100,6 +102,41 @@ export async function importHighlights(
     revalidatePath(root);
   }
   return { success: true, imported: valid.length, skipped };
+}
+
+export async function importClippings(
+  formData: FormData,
+): Promise<ImportResult> {
+  const file = formData.get('file') as File;
+  if (!file) {
+    return { error: 'Nenhum arquivo enviado' };
+  }
+
+  const raw = await file.text();
+  const highlights = parseClippings(raw);
+
+  if (highlights.length === 0) {
+    return { error: 'Nenhum highlight encontrado no arquivo' };
+  }
+
+  try {
+    await prisma.highlight.createMany({
+      data: highlights.map((h) => ({
+        bookTitle: h.bookTitle,
+        author: h.author,
+        text: h.text,
+        location: h.location ?? null,
+      })),
+    });
+  } catch (e) {
+    console.error('[importClippings]', e);
+    return { error: 'Erro ao salvar no banco. Tente novamente.' };
+  }
+
+  for (const root of LOCALE_ROOTS) {
+    revalidatePath(root);
+  }
+  return { success: true, imported: highlights.length, skipped: 0 };
 }
 
 export async function deleteHighlight(

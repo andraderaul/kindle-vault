@@ -10,6 +10,7 @@
     "lint": "biome lint --write ./src",
     "format": "biome format --write ./src",
     "ci": "biome ci ./src",
+    "test": "node --import tsx --test src/lib/parsers/clippings.test.ts",
     "i18n:extract": "lingui extract",
     "i18n:compile": "lingui compile",
     "i18n:check": "lingui compile --strict"
@@ -36,6 +37,7 @@
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

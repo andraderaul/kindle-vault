@@ -136,6 +136,30 @@ msgstr "No highlights found matching your search."
 msgid "Nenhum highlight válido encontrado"
 msgstr "No valid highlights found"
 
+#: src/lib/actions.ts
+msgid "Nenhum highlight encontrado no arquivo"
+msgstr "No highlights found in the file"
+
+#: src/components/ImportForm.tsx
+msgid "My Clippings.txt"
+msgstr "My Clippings.txt"
+
+#: src/components/ImportForm.tsx
+msgid "JSON"
+msgstr "JSON"
+
+#: src/components/ImportForm.tsx
+msgid "Arraste o arquivo My Clippings.txt do seu Kindle ou clique para escolher"
+msgstr "Drag your Kindle's My Clippings.txt file here or click to choose"
+
+#: src/components/ImportForm.tsx
+msgid "Conecte o Kindle ao computador e procure o arquivo em <0>Kindle/documents/My Clippings.txt</0>"
+msgstr "Connect your Kindle to the computer and find the file at <0>Kindle/documents/My Clippings.txt</0>"
+
+#: src/components/ImportForm.tsx
+msgid "Tipo de arquivo para importar"
+msgstr "File type to import"
+
 #: src/lib/actions.ts:16
 msgid "O JSON deve ser um array"
 msgstr "The JSON must be an array"
