@@ -1,11 +1,27 @@
 import { setI18n } from '@lingui/react/server';
 import type { Metadata } from 'next';
 import { Crimson_Pro, Playfair_Display } from 'next/font/google';
+import Script from 'next/script';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { LinguiClientProvider } from '@/components/LinguiClientProvider';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { LOCALE_CODES } from '@/config/locales';
 import { cn } from '@/lib/cn';
 import { getI18n, getSafeLocale } from '@/lib/i18n';
+
+const themeScript = `
+(function() {
+  try {
+    var cookie = document.cookie.split(';').find(function(c) {
+      return c.trim().startsWith('THEME=');
+    });
+    var theme = cookie ? cookie.split('=')[1].trim() : null;
+    if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  } catch(e) {}
+})();
+`;
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -41,6 +57,12 @@ export default async function LangLayout({ children, params }: Props) {
 
   return (
     <html lang={safeLocale} suppressHydrationWarning>
+      <Script
+        id="theme-init"
+        strategy="beforeInteractive"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: static theme script, no user input
+        dangerouslySetInnerHTML={{ __html: themeScript }}
+      />
       <body
         className={cn(
           playfair.variable,
@@ -53,11 +75,13 @@ export default async function LangLayout({ children, params }: Props) {
           initialLocale={safeLocale}
           initialMessages={messages}
         >
-          <div className="fixed top-4 right-6 z-1000">
+          <div className="fixed top-4 right-6 z-1000 flex items-center gap-3">
+            <ThemeToggle />
+            <div className="w-px h-4 bg-fade/30" aria-hidden />
             <LanguageSwitcher />
           </div>
-          <div className="fixed top-0 bottom-0 left-0 w-[6px] bg-gradient-to-r from-black/10 to-transparent pointer-events-none z-[999]" />
-          <div className="fixed top-0 bottom-0 right-0 w-[6px] bg-gradient-to-l from-black/10 to-transparent pointer-events-none z-[999]" />
+          <div className="fixed top-0 bottom-0 left-0 w-[6px] bg-linear-to-r from-black/10 to-transparent dark:from-white/10 pointer-events-none z-[999]" />
+          <div className="fixed top-0 bottom-0 right-0 w-[6px] bg-linear-to-l from-black/10 to-transparent dark:from-white/10 pointer-events-none z-[999]" />
           <div className="max-w-3xl mx-auto px-6 py-12 md:py-20 bg-paper page-shadow min-h-screen relative z-10 transition-colors">
             {children}
           </div>

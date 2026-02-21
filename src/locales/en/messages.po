@@ -34,6 +34,14 @@ msgstr "← Back to Vault"
 msgid "Arquivo JSON inválido: {detail}"
 msgstr "Invalid JSON file: {detail}"
 
+#: src/components/ThemeToggle.tsx:20
+msgid "Ativar modo claro"
+msgstr "Switch to light mode"
+
+#: src/components/ThemeToggle.tsx:20
+msgid "Ativar modo escuro"
+msgstr "Switch to dark mode"
+
 #: src/components/SearchBar.tsx:17
 msgid "Buscar highlights por conteúdo"
 msgstr "Search highlights by content"
@@ -50,7 +58,7 @@ msgstr "Settings"
 msgid "Enviar JSON de highlights"
 msgstr "Upload Highlights JSON"
 
-#: src/lib/actions.ts:17
+#: src/lib/actions.ts:18
 msgid "Erro ao salvar no banco. Tente novamente."
 msgstr "Failed to save to database. Please try again."
 
@@ -58,7 +66,7 @@ msgstr "Failed to save to database. Please try again."
 msgid "Exporte seus highlights para JSON e envie aqui. Deve ser um array de objetos com bookTitle, author, text e location (opcional)."
 msgstr "Export your highlights to JSON and upload them here. Must contain an array of objects with bookTitle, author, text, and location (optional)."
 
-#: src/lib/actions.ts:18
+#: src/lib/actions.ts:19
 msgid "Falha ao excluir"
 msgstr "Failed to delete"
 
@@ -87,7 +95,7 @@ msgid "Importar para o cofre"
 msgstr "Import to Vault"
 
 #: src/components/ImportForm.tsx:39
-#: src/lib/actions.ts:14
+#: src/lib/actions.ts:15
 msgid "JSON inválido"
 msgstr "Invalid JSON"
 
@@ -112,7 +120,11 @@ msgstr "Read highlight"
 msgid "Livro →"
 msgstr "Book →"
 
-#: src/lib/actions.ts:13
+#: src/components/LanguageSwitcher.tsx:58
+#~ msgid "Mudar idioma para {label}"
+#~ msgstr "Switch language to {label}"
+
+#: src/lib/actions.ts:14
 msgid "Nenhum arquivo enviado"
 msgstr "No file uploaded"
 
@@ -120,11 +132,11 @@ msgstr "No file uploaded"
 msgid "Nenhum highlight encontrado para sua busca."
 msgstr "No highlights found matching your search."
 
-#: src/lib/actions.ts:16
+#: src/lib/actions.ts:17
 msgid "Nenhum highlight válido encontrado"
 msgstr "No valid highlights found"
 
-#: src/lib/actions.ts:15
+#: src/lib/actions.ts:16
 msgid "O JSON deve ser um array"
 msgstr "The JSON must be an array"
 
@@ -160,6 +172,10 @@ msgstr "Restart"
 msgid "Reproduzir"
 msgstr "Play"
 
+#: src/components/LanguageSwitcher.tsx:48
+#~ msgid "Seletor de idioma"
+#~ msgstr "Language selector"
+
 #: src/app/[lang]/page.tsx:59
 msgid "Seu cofre está vazio. Importe alguns highlights para começar."
 msgstr "Your vault is empty. Import some highlights to begin."
@@ -175,11 +191,3 @@ msgstr "Speed"
 #: src/components/AudioPlayer.tsx:146
 msgid "Voz"
 msgstr "Voice"
-
-#: src/components/LanguageSwitcher.tsx:48
-msgid "Seletor de idioma"
-msgstr "Language selector"
-
-#: src/components/LanguageSwitcher.tsx:58
-msgid "Mudar idioma para {label}"
-msgstr "Switch language to {label}"

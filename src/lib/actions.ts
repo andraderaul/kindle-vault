@@ -102,7 +102,9 @@ export async function importHighlights(
   return { success: true, imported: valid.length, skipped };
 }
 
-export async function deleteHighlight(id: string): Promise<DeleteHighlightResult> {
+export async function deleteHighlight(
+  id: string,
+): Promise<DeleteHighlightResult> {
   try {
     await prisma.highlight.delete({ where: { id } });
     for (const root of LOCALE_ROOTS) {

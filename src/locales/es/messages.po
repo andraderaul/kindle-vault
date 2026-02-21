@@ -34,6 +34,14 @@ msgstr "← Volver al cofre"
 msgid "Arquivo JSON inválido: {detail}"
 msgstr "Archivo JSON inválido: {detail}"
 
+#: src/components/ThemeToggle.tsx:20
+msgid "Ativar modo claro"
+msgstr "Activar modo claro"
+
+#: src/components/ThemeToggle.tsx:20
+msgid "Ativar modo escuro"
+msgstr "Activar modo oscuro"
+
 #: src/components/SearchBar.tsx:17
 msgid "Buscar highlights por conteúdo"
 msgstr "Buscar destacados por contenido"
@@ -50,7 +58,7 @@ msgstr "Ajustes"
 msgid "Enviar JSON de highlights"
 msgstr "Subir JSON de destacados"
 
-#: src/lib/actions.ts:17
+#: src/lib/actions.ts:18
 msgid "Erro ao salvar no banco. Tente novamente."
 msgstr "Error al guardar en la base de datos. Inténtalo de nuevo."
 
@@ -58,7 +66,7 @@ msgstr "Error al guardar en la base de datos. Inténtalo de nuevo."
 msgid "Exporte seus highlights para JSON e envie aqui. Deve ser um array de objetos com bookTitle, author, text e location (opcional)."
 msgstr "Exporta tus destacados a JSON y súbelos aquí. Debe ser un array de objetos con bookTitle, author, text y location (opcional)."
 
-#: src/lib/actions.ts:18
+#: src/lib/actions.ts:19
 msgid "Falha ao excluir"
 msgstr "Error al eliminar"
 
@@ -87,7 +95,7 @@ msgid "Importar para o cofre"
 msgstr "Importar al cofre"
 
 #: src/components/ImportForm.tsx:39
-#: src/lib/actions.ts:14
+#: src/lib/actions.ts:15
 msgid "JSON inválido"
 msgstr "JSON inválido"
 
@@ -112,7 +120,11 @@ msgstr "Leer destacado"
 msgid "Livro →"
 msgstr "Libro →"
 
-#: src/lib/actions.ts:13
+#: src/components/LanguageSwitcher.tsx:58
+#~ msgid "Mudar idioma para {label}"
+#~ msgstr "Cambiar idioma a {label}"
+
+#: src/lib/actions.ts:14
 msgid "Nenhum arquivo enviado"
 msgstr "No se envió ningún archivo"
 
@@ -120,11 +132,11 @@ msgstr "No se envió ningún archivo"
 msgid "Nenhum highlight encontrado para sua busca."
 msgstr "No se encontraron destacados para tu búsqueda."
 
-#: src/lib/actions.ts:16
+#: src/lib/actions.ts:17
 msgid "Nenhum highlight válido encontrado"
 msgstr "No se encontraron destacados válidos"
 
-#: src/lib/actions.ts:15
+#: src/lib/actions.ts:16
 msgid "O JSON deve ser um array"
 msgstr "El JSON debe ser un array"
 
@@ -160,6 +172,10 @@ msgstr "Reiniciar"
 msgid "Reproduzir"
 msgstr "Reproducir"
 
+#: src/components/LanguageSwitcher.tsx:48
+#~ msgid "Seletor de idioma"
+#~ msgstr "Selector de idioma"
+
 #: src/app/[lang]/page.tsx:59
 msgid "Seu cofre está vazio. Importe alguns highlights para começar."
 msgstr "Tu cofre está vacío. Importa algunos destacados para comenzar."
@@ -175,11 +191,3 @@ msgstr "Velocidad"
 #: src/components/AudioPlayer.tsx:146
 msgid "Voz"
 msgstr "Voz"
-
-#: src/components/LanguageSwitcher.tsx:48
-msgid "Seletor de idioma"
-msgstr "Selector de idioma"
-
-#: src/components/LanguageSwitcher.tsx:58
-msgid "Mudar idioma para {label}"
-msgstr "Cambiar idioma a {label}"

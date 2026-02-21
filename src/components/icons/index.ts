@@ -1,7 +1,9 @@
 export { ChevronDownIcon } from './ChevronDownIcon';
 export { ChevronUpIcon } from './ChevronUpIcon';
+export { MoonIcon } from './MoonIcon';
 export { PauseIcon } from './PauseIcon';
 export { PlayIcon } from './PlayIcon';
 export { RestartIcon } from './RestartIcon';
 export { SettingsIcon } from './SettingsIcon';
 export { StopIcon } from './StopIcon';
+export { SunIcon } from './SunIcon';
