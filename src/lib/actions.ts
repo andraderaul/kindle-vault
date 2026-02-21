@@ -3,24 +3,29 @@
 import { msg } from '@lingui/core/macro';
 import { revalidatePath } from 'next/cache';
 import { LOCALE_ROOTS } from '@/config/locales';
+import { UPLOAD_CONFIG } from '@/config/upload';
 import { parseClippings } from '@/lib/parsers/clippings';
 import { prisma } from './prisma';
 
 export type ImportResult =
   | { success: true; imported: number; skipped: number }
-  | { error: string };
+  | { error: string; errorParams?: Record<string, number | string> };
 
 // Mark strings for Lingui extraction; the client translates when displaying
 const ERRORS = {
   noFile: msg`Nenhum arquivo enviado`,
+  fileTooBig: msg`Arquivo muito grande. O limite é 5MB.`,
+  invalidTypeTxt: msg`Tipo de arquivo inválido. Envie um arquivo .txt`,
+  invalidTypeJson: msg`Tipo de arquivo inválido. Envie um arquivo .json`,
   invalidJson: msg`JSON inválido`,
   notArray: msg`O JSON deve ser um array`,
   noValid: msg`Nenhum highlight válido encontrado`,
   noClippings: msg`Nenhum highlight encontrado no arquivo`,
+  tooManyHighlights: msg`Arquivo contém muitos highlights. O limite por importação é {limit}.`,
   dbError: msg`Erro ao salvar no banco. Tente novamente.`,
   deleteFailed: msg`Falha ao excluir`,
 } as const;
-void ERRORS; // referência para extração
+void ERRORS; // reference for extraction
 
 export type DeleteHighlightResult =
   | { success: true }
@@ -44,7 +49,8 @@ function isValidHighlight(item: unknown): item is HighlightInput {
     typeof h.author === 'string' &&
     h.author.trim().length > 0 &&
     typeof h.text === 'string' &&
-    h.text.trim().length > 0
+    h.text.trim().length > 0 &&
+    h.text.length <= UPLOAD_CONFIG.maxHighlightLength
   );
 }
 
@@ -53,9 +59,13 @@ export async function importHighlights(
 ): Promise<ImportResult> {
   const file = formData.get('file') as File;
   if (!file) {
-    return {
-      error: 'Nenhum arquivo enviado',
-    };
+    return { error: 'Nenhum arquivo enviado' };
+  }
+  if (file.size > UPLOAD_CONFIG.maxFileSizeBytes) {
+    return { error: 'Arquivo muito grande. O limite é 5MB.' };
+  }
+  if (!UPLOAD_CONFIG.allowedTypesJson.includes(file.type)) {
+    return { error: 'Tipo de arquivo inválido. Envie um arquivo .json' };
   }
 
   const raw = await file.text();
@@ -64,22 +74,23 @@ export async function importHighlights(
   try {
     parsed = JSON.parse(raw);
   } catch {
-    return {
-      error: 'JSON inválido',
-    };
+    return { error: 'JSON inválido' };
   }
 
   if (!Array.isArray(parsed)) {
-    return {
-      error: 'O JSON deve ser um array',
-    };
+    return { error: 'O JSON deve ser um array' };
   }
   const valid = parsed.filter(isValidHighlight);
   const skipped = parsed.length - valid.length;
 
   if (valid.length === 0) {
+    return { error: 'Nenhum highlight válido encontrado' };
+  }
+  if (valid.length > UPLOAD_CONFIG.maxHighlightsPerImport) {
     return {
-      error: 'Nenhum highlight válido encontrado',
+      error:
+        'Arquivo contém muitos highlights. O limite por importação é {limit}.',
+      errorParams: { limit: UPLOAD_CONFIG.maxHighlightsPerImport },
     };
   }
 
@@ -111,12 +122,25 @@ export async function importClippings(
   if (!file) {
     return { error: 'Nenhum arquivo enviado' };
   }
+  if (file.size > UPLOAD_CONFIG.maxFileSizeBytes) {
+    return { error: 'Arquivo muito grande. O limite é 5MB.' };
+  }
+  if (!UPLOAD_CONFIG.allowedTypesTxt.includes(file.type)) {
+    return { error: 'Tipo de arquivo inválido. Envie um arquivo .txt' };
+  }
 
   const raw = await file.text();
   const highlights = parseClippings(raw);
 
   if (highlights.length === 0) {
     return { error: 'Nenhum highlight encontrado no arquivo' };
+  }
+  if (highlights.length > UPLOAD_CONFIG.maxHighlightsPerImport) {
+    return {
+      error:
+        'Arquivo contém muitos highlights. O limite por importação é {limit}.',
+      errorParams: { limit: UPLOAD_CONFIG.maxHighlightsPerImport },
+    };
   }
 
   try {

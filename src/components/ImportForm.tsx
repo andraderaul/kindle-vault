@@ -1,13 +1,13 @@
 'use client';
 
 import { msg } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { useLingui } from '@lingui/react';
+import { Trans } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
 import type { ImportResult } from '@/lib/actions';
 import { importClippings, importHighlights } from '@/lib/actions';
-import { parseClippings } from '@/lib/parsers/clippings';
 import { cn } from '@/lib/cn';
+import { parseClippings } from '@/lib/parsers/clippings';
 
 type ImportTab = 'clippings' | 'json';
 
@@ -23,6 +23,7 @@ export function ImportForm() {
   const [message, setMessage] = useState<{
     type: 'success' | 'error';
     text: string;
+    params?: Record<string, number | string>;
   } | null>(null);
 
   const switchTab = (tab: ImportTab) => {
@@ -119,7 +120,11 @@ export function ImportForm() {
 
     setLoading(false);
     if ('error' in result) {
-      setMessage({ type: 'error', text: result.error });
+      setMessage({
+        type: 'error',
+        text: result.error,
+        params: result.errorParams,
+      });
     } else {
       setMessage({
         type: 'success',
@@ -286,7 +291,9 @@ export function ImportForm() {
                 : 'bg-green-50 border-green-200 text-green-800',
             )}
           >
-            {message.type === 'error' ? _(message.text) : message.text}
+            {message.type === 'error'
+              ? _(message.text, message.params ?? {})
+              : message.text}
           </div>
         )}
 
@@ -302,18 +309,22 @@ export function ImportForm() {
             </h3>
             {preview && Array.isArray(preview) && preview.length > 0 ? (
               <ul className="text-sm text-ink/90 font-crimson space-y-2">
-                {(preview as { bookTitle: string; author: string; text: string }[]).map(
-                  (h, i) => (
-                    <li
-                      key={`${h.bookTitle}-${h.text.slice(0, 40)}-${i}`}
-                      className="border-l-2 border-gold/30 pl-2"
-                    >
-                      <span className="font-semibold">{h.bookTitle}</span>
-                      {' — '}
-                      {h.text}
-                    </li>
-                  ),
-                )}
+                {(
+                  preview as {
+                    bookTitle: string;
+                    author: string;
+                    text: string;
+                  }[]
+                ).map((h, i) => (
+                  <li
+                    key={`${h.bookTitle}-${h.text.slice(0, 40)}-${i}`}
+                    className="border-l-2 border-gold/30 pl-2"
+                  >
+                    <span className="font-semibold">{h.bookTitle}</span>
+                    {' — '}
+                    {h.text}
+                  </li>
+                ))}
               </ul>
             ) : (
               <p className="text-fade text-sm">

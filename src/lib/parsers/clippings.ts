@@ -1,3 +1,5 @@
+import { UPLOAD_CONFIG } from '@/config/upload';
+
 export type HighlightInput = {
   bookTitle: string;
   author: string;
@@ -7,6 +9,13 @@ export type HighlightInput = {
 
 const KINDLE_LIMIT_MESSAGE =
   'You have reached the maximum number of highlights allowed on this item.';
+
+function truncateSafe(text: string, maxLength: number): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return [...text].slice(0, maxLength).join('');
+}
 
 function parseTitleAndAuthor(line: string): {
   bookTitle: string;
@@ -51,7 +60,8 @@ export function parseClippings(raw: string): HighlightInput[] {
     const titleLine = lines[0];
     const metaLine = lines[1];
     const textLines = lines.slice(3);
-    const text = textLines.join(' ').trim();
+    const rawText = textLines.join(' ').trim();
+    const text = truncateSafe(rawText, UPLOAD_CONFIG.maxHighlightLength);
 
     if (!metaLine.toLowerCase().includes('highlight')) {
       continue;

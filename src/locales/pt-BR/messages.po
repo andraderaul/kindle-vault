@@ -128,6 +128,22 @@ msgstr "Livro →"
 msgid "Nenhum arquivo enviado"
 msgstr "Nenhum arquivo enviado"
 
+#: src/lib/actions.ts
+msgid "Arquivo muito grande. O limite é 5MB."
+msgstr "Arquivo muito grande. O limite é 5MB."
+
+#: src/lib/actions.ts
+msgid "Tipo de arquivo inválido. Envie um arquivo .txt"
+msgstr "Tipo de arquivo inválido. Envie um arquivo .txt"
+
+#: src/lib/actions.ts
+msgid "Tipo de arquivo inválido. Envie um arquivo .json"
+msgstr "Tipo de arquivo inválido. Envie um arquivo .json"
+
+#: src/lib/actions.ts
+msgid "Arquivo contém muitos highlights. O limite por importação é {limit}."
+msgstr "Arquivo contém muitos highlights. O limite por importação é {limit}."
+
 #: src/app/[lang]/page.tsx:91
 msgid "Nenhum highlight encontrado para sua busca."
 msgstr "Nenhum highlight encontrado para sua busca."

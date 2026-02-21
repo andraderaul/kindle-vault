@@ -11,9 +11,15 @@ The ant cannot understand the universe.
 ==========`;
     const result = parseClippings(raw);
     assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].bookTitle, 'Sapiens: A Brief History of Humankind');
+    assert.strictEqual(
+      result[0].bookTitle,
+      'Sapiens: A Brief History of Humankind',
+    );
     assert.strictEqual(result[0].author, 'Yuval Noah Harari');
-    assert.strictEqual(result[0].text, 'The ant cannot understand the universe.');
+    assert.strictEqual(
+      result[0].text,
+      'The ant cannot understand the universe.',
+    );
     assert.strictEqual(result[0].location, 638);
   });
 
@@ -59,7 +65,9 @@ Some highlight text here.
   });
 
   it('Caso 6 — arquivo com BOM (\\uFEFF)', () => {
-    const raw = '\uFEFF' + `Sapiens (Yuval Noah Harari)
+    const raw =
+      '\uFEFF' +
+      `Sapiens (Yuval Noah Harari)
 - Your Highlight on Location 100 | Added on Monday
 
 Text with BOM.
