@@ -8,6 +8,7 @@ import { useRef, useState } from 'react';
 import type { ImportResult } from '@/lib/actions';
 import { importClippings, importHighlights } from '@/lib/actions';
 import { cn } from '@/lib/cn';
+import { translateWithValues } from '@/lib/i18n';
 import { parseClippings } from '@/lib/parsers/clippings';
 
 type ImportTab = 'clippings' | 'json';
@@ -101,12 +102,7 @@ export function ImportForm() {
         err instanceof Error ? err.message : i18n._(msg`JSON inválido`);
       setMessage({
         type: 'error',
-        text: String(
-          i18n._({
-            ...msg`Arquivo JSON inválido: {detail}`,
-            values: { detail },
-          }),
-        ),
+        text: String(translateWithValues(i18n, msg`Arquivo JSON inválido: {detail}`, { detail })),
       });
       setPreview(null);
     }
@@ -140,12 +136,9 @@ export function ImportForm() {
       setMessage({
         type: 'success',
         text: String(
-          i18n._({
-            ...msg`{imported} highlights importados com sucesso! ({skipped} ignorados)`,
-            values: {
-              imported: result.imported,
-              skipped: result.skipped,
-            },
+          translateWithValues(i18n, msg`{imported} highlights importados com sucesso! ({skipped} ignorados)`, {
+            imported: result.imported,
+            skipped: result.skipped,
           }),
         ),
       });
@@ -306,12 +299,9 @@ export function ImportForm() {
           >
             {message.type === 'error'
               ? 'descriptor' in message
-                ? i18n._({
-                    ...message.descriptor,
-                    values: {
-                      ...(message.descriptor.values as Record<string, unknown>),
-                      ...message.params,
-                    },
+                ? translateWithValues(i18n, message.descriptor, {
+                    ...(message.descriptor.values as Record<string, unknown>),
+                    ...message.params,
                   })
                 : message.text
               : message.text}
@@ -322,9 +312,8 @@ export function ImportForm() {
           <div className="bg-paper p-4 rounded border border-fade/10">
             <h3 className="text-xs font-bold uppercase tracking-wider text-fade mb-2">
               {String(
-                i18n._({
-                  ...msg`Prévia (primeiros {count})`,
-                  values: { count: Math.min(3, clippingsCount) },
+                translateWithValues(i18n, msg`Prévia (primeiros {count})`, {
+                  count: Math.min(3, clippingsCount),
                 }),
               )}
             </h3>
@@ -358,12 +347,7 @@ export function ImportForm() {
         {activeTab === 'json' && preview && (
           <div className="bg-paper p-4 rounded border border-fade/10">
             <h3 className="text-xs font-bold uppercase tracking-wider text-fade mb-2">
-              {String(
-                i18n._({
-                  ...msg`Prévia (primeiros {count})`,
-                  values: { count: preview.length },
-                }),
-              )}
+              {String(translateWithValues(i18n, msg`Prévia (primeiros {count})`, { count: preview.length }))}
             </h3>
             <pre className="text-[10px] overflow-auto max-h-40 text-ink/80 font-mono">
               {JSON.stringify(preview, null, 2)}

@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
 import Link from 'next/link';
+import { translateWithValues } from '@/lib/i18n';
 import type { Highlight } from '@/types/highlight';
 
 type SearchResultsSectionProps = {
@@ -22,10 +23,11 @@ export function SearchResultsSection({
   return (
     <div className="mt-8 animate-fade-in-up">
       <h2 className="font-playfair text-2xl mb-6 text-ink">
-        {i18n._({
-          ...msg`{count, plural, one {# resultado para "{query}"} other {# resultados para "{query}"}}`,
-          values: { count: searchResults.length, query },
-        })}
+        {translateWithValues(
+          i18n,
+          msg`{count, plural, one {# resultado para "{query}"} other {# resultados para "{query}"}}`,
+          { count: searchResults.length, query },
+        )}
       </h2>
 
       {searchResults.length === 0 ? (
@@ -46,9 +48,8 @@ export function SearchResultsSection({
                 <span className="text-fade uppercase tracking-wider font-mono">
                   {highlight.bookTitle} •{' '}
                   {highlight.location != null
-                    ? i18n._({
-                        ...msg`Lok. {location}`,
-                        values: { location: highlight.location },
+                    ? translateWithValues(i18n, msg`Lok. {location}`, {
+                        location: highlight.location,
                       })
                     : i18n._(msg`Sem localização`)}
                 </span>

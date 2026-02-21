@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { setI18n } from '@lingui/react/server';
 import type { Metadata } from 'next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -6,15 +7,22 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { LOCALE_CODES } from '@/config/locales';
 import { getI18n, getSafeLocale } from '@/lib/i18n';
 
-export const metadata: Metadata = {
-  title: 'Kindle Vault',
-  description: 'A refined literary reader for Kindle highlights',
-};
-
 type Props = {
   children: React.ReactNode;
   params: Promise<{ lang: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  const safeLocale = getSafeLocale(lang);
+  const { i18n } = await getI18n(safeLocale);
+  return {
+    title: i18n._(msg`Kindle Vault`),
+    description: i18n._(
+      msg`Um leitor literário refinado para seus highlights do Kindle`,
+    ),
+  };
+}
 
 export default async function LangLayout({ children, params }: Props) {
   const { lang } = await params;

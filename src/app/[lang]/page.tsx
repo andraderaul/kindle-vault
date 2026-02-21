@@ -1,9 +1,12 @@
+import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { BookCard } from '@/components/BookCard';
 import { SearchBar } from '@/components/SearchBar';
 import { SearchResultsSection } from '@/components/SearchResultsSection';
+import { getI18n } from '@/lib/i18n';
 import { initLingui } from '@/lib/initLingui';
 import { getBooksGrouped, searchHighlights } from '@/lib/queries';
 
@@ -11,6 +14,14 @@ type Props = {
   params: Promise<{ lang: string }>;
   searchParams: Promise<{ q?: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  const { i18n } = await getI18n(lang);
+  return {
+    title: i18n._(msg`Kindle Vault`),
+  };
+}
 
 export default async function Home({ params, searchParams }: Props) {
   const { lang } = await params;

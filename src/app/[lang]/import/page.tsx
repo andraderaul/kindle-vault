@@ -1,11 +1,24 @@
+import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ImportForm } from '@/components/ImportForm';
+import { getI18n } from '@/lib/i18n';
 import { initLingui } from '@/lib/initLingui';
 
 type Props = {
   params: Promise<{ lang: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  const { i18n } = await getI18n(lang);
+  const appTitle = i18n._(msg`Kindle Vault`);
+  const importTitle = i18n._(msg`Importar`);
+  return {
+    title: `${importTitle} — ${appTitle}`,
+  };
+}
 
 export default async function ImportPage({ params }: Props) {
   const { lang } = await params;

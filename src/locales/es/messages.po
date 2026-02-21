@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/components/SearchResultsSection.tsx:26
+#: src/components/SearchResultsSection.tsx:28
 msgid "{count, plural, one {# resultado para \"{query}\"} other {# resultados para \"{query}\"}}"
 msgstr "{count, plural, one {# resultado para \"{query}\"} other {# resultados para \"{query}\"}}"
 
@@ -21,14 +21,18 @@ msgstr "{count, plural, one {# resultado para \"{query}\"} other {# resultados p
 #~ msgid "{count} {0}"
 #~ msgstr "{count} {0}"
 
-#: src/components/ImportForm.tsx:142
+#: src/components/ImportForm.tsx:139
 msgid "{imported} highlights importados com sucesso! ({skipped} ignorados)"
 msgstr "¡{imported} destacados importados con éxito! ({skipped} omitidos)"
 
 #: src/app/[lang]/book/[title]/page.tsx:55
-#: src/app/[lang]/import/page.tsx:21
+#: src/app/[lang]/import/page.tsx:34
 msgid "← Voltar ao cofre"
 msgstr "← Volver al cofre"
+
+#: src/app/[lang]/layout.tsx:21
+#~ msgid "A refined literary reader for Kindle highlights"
+#~ msgstr ""
 
 #: src/lib/actions.ts:28
 msgid "Arquivo contém muitos highlights. O limite por importação é {limit}."
@@ -42,7 +46,7 @@ msgstr "Archivo JSON inválido: {detail}"
 msgid "Arquivo muito grande. O limite é 5MB."
 msgstr "Archivo demasiado grande. El límite es 5MB."
 
-#: src/components/ImportForm.tsx:229
+#: src/components/ImportForm.tsx:227
 msgid "Arraste o arquivo My Clippings.txt do seu Kindle ou clique para escolher"
 msgstr "Arrastra el archivo My Clippings.txt de tu Kindle o haz clic para elegir"
 
@@ -62,7 +66,7 @@ msgstr "Buscar destacados por contenido"
 msgid "Buscar highlights por conteúdo..."
 msgstr "Buscar destacados por contenido..."
 
-#: src/components/ImportForm.tsx:247
+#: src/components/ImportForm.tsx:245
 msgid "Conecte o Kindle ao computador e procure o arquivo em <0>Kindle/documents/My Clippings.txt</0>"
 msgstr "Conecta el Kindle al ordenador y busca el archivo en <0>Kindle/documents/My Clippings.txt</0>"
 
@@ -70,7 +74,7 @@ msgstr "Conecta el Kindle al ordenador y busca el archivo en <0>Kindle/documents
 msgid "Configurações"
 msgstr "Ajustes"
 
-#: src/components/ImportForm.tsx:268
+#: src/components/ImportForm.tsx:266
 msgid "Enviar JSON de highlights"
 msgstr "Subir JSON de destacados"
 
@@ -78,7 +82,7 @@ msgstr "Subir JSON de destacados"
 msgid "Erro ao salvar no banco. Tente novamente."
 msgstr "Error al guardar en la base de datos. Inténtalo de nuevo."
 
-#: src/components/ImportForm.tsx:272
+#: src/components/ImportForm.tsx:270
 msgid "Exporte seus highlights para JSON e envie aqui. Deve ser um array de objetos com bookTitle, author, text e location (opcional)."
 msgstr "Exporta tus destacados a JSON y súbelos aquí. Debe ser un array de objetos con bookTitle, author, text y location (opcional)."
 
@@ -94,34 +98,38 @@ msgstr "Destacado"
 msgid "Highlights"
 msgstr "Destacados"
 
-#: src/components/ImportForm.tsx:366
+#: src/components/ImportForm.tsx:363
 msgid "Importando..."
 msgstr "Importando..."
 
-#: src/app/[lang]/page.tsx:38
+#: src/app/[lang]/import/page.tsx:17
+#: src/app/[lang]/page.tsx:49
 msgid "Importar"
 msgstr "Importar"
 
-#: src/app/[lang]/import/page.tsx:24
-#: src/components/ImportForm.tsx:171
+#: src/app/[lang]/import/page.tsx:37
+#: src/components/ImportForm.tsx:169
 msgid "Importar Highlights"
 msgstr "Importar destacados"
 
-#: src/components/ImportForm.tsx:366
+#: src/components/ImportForm.tsx:363
 msgid "Importar para o cofre"
 msgstr "Importar al cofre"
 
-#: src/components/ImportForm.tsx:213
+#: src/components/ImportForm.tsx:211
 msgid "JSON"
 msgstr "JSON"
 
-#: src/components/ImportForm.tsx:100
+#: src/components/ImportForm.tsx:102
 #: src/lib/actions.ts:24
 msgid "JSON inválido"
 msgstr "JSON inválido"
 
 #: src/app/[lang]/book/[title]/page.tsx:25
-#: src/app/[lang]/page.tsx:29
+#: src/app/[lang]/import/page.tsx:16
+#: src/app/[lang]/layout.tsx:20
+#: src/app/[lang]/page.tsx:22
+#: src/app/[lang]/page.tsx:40
 msgid "Kindle Vault"
 msgstr "Kindle Vault"
 
@@ -137,12 +145,12 @@ msgstr "Leer →"
 msgid "Ler highlight"
 msgstr "Leer destacado"
 
-#: src/components/SearchResultsSection.tsx:58
+#: src/components/SearchResultsSection.tsx:60
 msgid "Livro →"
 msgstr "Libro →"
 
 #: src/components/HighlightCard.tsx:50
-#: src/components/SearchResultsSection.tsx:49
+#: src/components/SearchResultsSection.tsx:51
 msgid "Lok. {location}"
 msgstr "Loc. {location}"
 
@@ -150,7 +158,7 @@ msgstr "Loc. {location}"
 #~ msgid "Mudar idioma para {label}"
 #~ msgstr "Cambiar idioma a {label}"
 
-#: src/components/ImportForm.tsx:195
+#: src/components/ImportForm.tsx:193
 msgid "My Clippings.txt"
 msgstr "My Clippings.txt"
 
@@ -163,7 +171,7 @@ msgstr "No se envió ningún archivo"
 msgid "Nenhum highlight encontrado no arquivo"
 msgstr "No se encontraron destacados en el archivo"
 
-#: src/components/SearchResultsSection.tsx:33
+#: src/components/SearchResultsSection.tsx:35
 msgid "Nenhum highlight encontrado para sua busca."
 msgstr "No se encontraron destacados para tu búsqueda."
 
@@ -175,7 +183,7 @@ msgstr "No se encontraron destacados válidos"
 msgid "O JSON deve ser um array"
 msgstr "El JSON debe ser un array"
 
-#: src/components/ImportForm.tsx:95
+#: src/components/ImportForm.tsx:96
 msgid "O JSON não é um array."
 msgstr "El JSON no es un array."
 
@@ -196,7 +204,7 @@ msgid "Português (BR)"
 msgstr "Portugués (BR)"
 
 #: src/components/ImportForm.tsx:315
-#: src/components/ImportForm.tsx:352
+#: src/components/ImportForm.tsx:350
 msgid "Prévia (primeiros {count})"
 msgstr "Vista previa (primeros {count})"
 
@@ -212,15 +220,15 @@ msgstr "Reproducir"
 #~ msgid "Seletor de idioma"
 #~ msgstr "Selector de idioma"
 
-#: src/components/SearchResultsSection.tsx:52
+#: src/components/SearchResultsSection.tsx:54
 msgid "Sem localização"
 msgstr "Sin ubicación"
 
-#: src/app/[lang]/page.tsx:57
+#: src/app/[lang]/page.tsx:68
 msgid "Seu cofre está vazio. Importe alguns highlights para começar."
 msgstr "Tu cofre está vacío. Importa algunos destacados para comenzar."
 
-#: src/app/[lang]/page.tsx:32
+#: src/app/[lang]/page.tsx:43
 msgid "Sua coleção literária pessoal"
 msgstr "Tu colección literaria personal"
 
@@ -232,9 +240,13 @@ msgstr "Tipo de archivo inválido. Envía un archivo .json."
 msgid "Tipo de arquivo inválido. Envie um arquivo .txt"
 msgstr "Tipo de archivo inválido. Envía un archivo .txt."
 
-#: src/components/ImportForm.tsx:177
+#: src/components/ImportForm.tsx:175
 msgid "Tipo de arquivo para importar"
 msgstr "Tipo de archivo a importar"
+
+#: src/app/[lang]/layout.tsx:22
+msgid "Um leitor literário refinado para seus highlights do Kindle"
+msgstr "Un lector literario refinado para tus highlights de Kindle"
 
 #: src/components/AudioPlayer.tsx:124
 msgid "Velocidade"

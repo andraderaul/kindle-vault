@@ -54,37 +54,37 @@ export function SearchBar() {
 }
 ```
 
-### Client Components — `msg` com variáveis: usar `i18n._()`
+### Client Components — `msg` com variáveis: usar `i18n._(msg, values)`
 
-Quando usar o macro `msg` com placeholders em Client Components, chamar `i18n._()` (não `_()`) e passar um descriptor com `values`, para evitar erros de tipo. Nunca usar `@ts-expect-error` para Lingui.
+Quando usar o macro `msg` com placeholders em Client Components, chamar `i18n._(msg\`...\`, values)` (dois argumentos). Nunca usar o spread no primeiro argumento: a forma `i18n._({ ...msg\`...\`, values })` quebra o `lingui extract` (bug no plugin Babel). Nunca usar `@ts-expect-error` para Lingui.
+
+O runtime do Lingui aceita `i18n._(descriptor, values)`; as declarações de tipo não incluem essa sobrecarga. Use o helper `translateWithValues` de `@/lib/i18n`, que faz a chamada com o cast necessário.
 
 ```tsx
 'use client'
 import { msg } from '@lingui/core/macro'
 import { useLingui } from '@lingui/react'
+import { translateWithValues } from '@/lib/i18n'
 
 export function Example() {
   const { i18n } = useLingui()
 
-  // ✅ mensagem com variáveis — descriptor + values
-  i18n._({
-    ...msg`Prévia (primeiros {count})`,
-    values: { count: 3 },
-  })
+  // ✅ mensagem com variáveis — dois argumentos (extract funciona)
+  translateWithValues(i18n, msg`Prévia (primeiros {count})`, { count: 3 })
 
   // ✅ mensagem sem variáveis
   i18n._(msg`Sem localização`)
 
-  // ✅ MessageDescriptor recebido (ex.: erro de action) — mesclar values ao exibir
-  i18n._({
-    ...descriptor,
-    values: { ...(descriptor.values ?? {}), ...params },
-  })
+  // ✅ MessageDescriptor recebido (ex.: erro de action) — segundo arg = values mesclados
+  translateWithValues(i18n, descriptor, { ...(descriptor.values ?? {}), ...params })
 }
 ```
 
 ```tsx
-// ❌ evita — exige @ts-expect-error e quebra tipos
+// ❌ NUNCA — quebra o lingui extract (plugin acessa key.name em propriedades; spread não tem key)
+i18n._({ ...msg`Prévia (primeiros {count})`, values: { count: 3 } })
+
+// ❌ evita — tipos do Lingui podem não aceitar _(msg, values) em alguns casos
 _(msg`Prévia (primeiros {count})`, { count: 3 })
 ```
 
@@ -162,9 +162,10 @@ _('Lendo highlight {current} de {total}', { current: currentIndex + 1, total })
 // ❌
 title: `${decoded} — Kindle Vault`
 
-// ✅
+// ✅ — usar msg para o extract incluir a string nos catálogos
+import { msg } from '@lingui/core/macro'
 const i18n = await getI18n(lang)
-title: `${decoded} — ${i18n._('Kindle Vault')}`
+title: `${decoded} — ${i18n._(msg`Kindle Vault`)}`
 ```
 
 ---
