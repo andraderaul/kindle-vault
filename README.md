@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kindle Vault
 
-## Getting Started
+A place to store and listen to highlights from your Kindle readings.
 
-First, run the development server:
+---
+
+## What it does
+
+Imports your Kindle highlights and organizes them by book. You can read the excerpts in the browser or have the app read them aloud using the Web Speech API — no cost, no external API.
+
+It accepts two import formats:
+- `My Clippings.txt` — the file the Kindle itself generates, no conversion needed
+- JSON — for those who have already exported highlights through other means
+
+---
+
+## Stack
+
+- Next.js 15 (App Router)
+- TypeScript strict
+- Prisma + SQLite
+- TailwindCSS v4
+- Lingui.js (pt-BR, en, es)
+- Web Speech API
+
+---
+
+## Running locally
 
 ```bash
+git clone https://github.com/andraderaul/kindle-vault
+cd kindle-vault
+
+npm install
+
+npx prisma migrate dev --name init
+
+npm run i18n:compile
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Importing your highlights
 
-## Learn More
+**Via `My Clippings.txt`:**
+Connect your Kindle to the computer. The file is at `Kindle/documents/My Clippings.txt`. Upload it directly on the import screen.
 
-To learn more about Next.js, take a look at the following resources:
+**Via JSON:**
+The file must be an array of objects with the fields `bookTitle`, `author`, `text`, and optionally `location`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```json
+[
+  {
+    "bookTitle": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "text": "Wheat did not give the individual man a better life.",
+    "location": 942
+  }
+]
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## About the project
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+I started it because I wanted to reread my highlights without depending on any external service. The data lives in a local SQLite database — nothing leaves your machine.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+I tried to follow good engineering practices throughout development: separation between queries and actions (inspired by CQRS), isolated icon components, internationalization with Lingui, dark mode without load flash, and a robust parser for the Kindle format. Not because the project demands that complexity, but because it was an opportunity to practice.
+
+There are cursor rules in `.cursor/rules/` documenting the architecture decisions in case you want to understand the reasoning behind each choice.
+
+---
+
+## Useful commands
+
+```bash
+npm run dev          # development
+npm run build        # production build
+npm run check        # lint + format (Biome)
+npm run i18n:extract # extract new strings for translation
+npm run i18n:compile # compile translations
+npm run i18n:check   # validate complete translations
+
+npx prisma studio    # view the database
+npx prisma migrate dev --name <name>  # new migration
+```
+
+---
+
+## License
+
+MIT
