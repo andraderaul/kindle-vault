@@ -15,10 +15,9 @@ export function translateWithValues(
   descriptor: MessageDescriptor,
   values?: Record<string, unknown>,
 ): string {
-  return (i18n._ as (d: MessageDescriptor, v?: Record<string, unknown>) => string)(
-    descriptor,
-    values,
-  );
+  return (
+    i18n._ as (d: MessageDescriptor, v?: Record<string, unknown>) => string
+  )(descriptor, values);
 }
 
 export const getI18n = cache(async (locale: string) => {

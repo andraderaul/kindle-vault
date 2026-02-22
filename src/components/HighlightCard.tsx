@@ -2,31 +2,49 @@
 
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { forwardRef, memo } from 'react';
 import { PlayIcon } from '@/components/icons';
+import { WordHighlighter } from '@/components/WordHighlighter';
 import { cn } from '@/lib/cn';
+import { translateWithValues } from '@/lib/i18n';
 import type { Highlight } from '@/types/highlight';
 
 type HighlightCardProps = {
   highlight: Highlight;
+  index: number;
   isActive: boolean;
+  activeWordIndex: number | null;
   wasRead: boolean;
-  onClick?: () => void;
+  onCardClick: (index: number) => void;
   isFirst: boolean;
 };
 
-export function HighlightCard({
-  highlight,
-  isActive,
-  wasRead,
-  onClick,
-  isFirst,
-}: HighlightCardProps) {
-  const { _ } = useLingui();
+const TEXT_CLASS = 'font-crimson text-ink whitespace-pre-wrap';
+
+const HighlightCardComponent = forwardRef<
+  HTMLButtonElement,
+  HighlightCardProps
+>(function HighlightCard(
+  {
+    highlight,
+    index,
+    isActive,
+    activeWordIndex,
+    wasRead,
+    onCardClick,
+    isFirst,
+  },
+  ref,
+) {
+  const { i18n, _ } = useLingui();
   return (
     <button
+      ref={ref}
       type="button"
       aria-label={isActive ? _(msg`Pausar highlight`) : _(msg`Ler highlight`)}
-      onClick={onClick}
+      onClick={() => {
+        onCardClick(index);
+      }}
       className={cn(
         'w-full text-left p-6 mb-8 rounded-md transition-all duration-300 cursor-pointer text-lg leading-relaxed border-0 bg-transparent',
         isActive
@@ -37,17 +55,22 @@ export function HighlightCard({
     >
       <div className="flex items-start">
         <div className="flex-1">
-          <p
-            className={cn(
-              'font-crimson text-ink whitespace-pre-wrap',
-              isFirst && 'drop-cap',
-            )}
-          >
-            {highlight.text}
-          </p>
+          {isActive ? (
+            <WordHighlighter
+              text={highlight.text}
+              activeWordIndex={activeWordIndex}
+              className={cn(TEXT_CLASS, isFirst && 'drop-cap')}
+            />
+          ) : (
+            <p className={cn(TEXT_CLASS, isFirst && 'drop-cap')}>
+              {highlight.text}
+            </p>
+          )}
           {highlight.location != null && (
             <div className="mt-4 text-xs text-fade/70 uppercase tracking-widest font-mono">
-              {_(msg`Lok. {location}`, { location: highlight.location })}
+              {translateWithValues(i18n, msg`Lok. {location}`, {
+                location: highlight.location,
+              })}
             </div>
           )}
         </div>
@@ -59,4 +82,6 @@ export function HighlightCard({
       </div>
     </button>
   );
-}
+});
+
+export const HighlightCard = memo(HighlightCardComponent);

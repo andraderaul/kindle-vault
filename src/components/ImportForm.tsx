@@ -102,7 +102,11 @@ export function ImportForm() {
         err instanceof Error ? err.message : i18n._(msg`JSON inválido`);
       setMessage({
         type: 'error',
-        text: String(translateWithValues(i18n, msg`Arquivo JSON inválido: {detail}`, { detail })),
+        text: String(
+          translateWithValues(i18n, msg`Arquivo JSON inválido: {detail}`, {
+            detail,
+          }),
+        ),
       });
       setPreview(null);
     }
@@ -136,10 +140,14 @@ export function ImportForm() {
       setMessage({
         type: 'success',
         text: String(
-          translateWithValues(i18n, msg`{imported} highlights importados com sucesso! ({skipped} ignorados)`, {
-            imported: result.imported,
-            skipped: result.skipped,
-          }),
+          translateWithValues(
+            i18n,
+            msg`{imported} highlights importados com sucesso! ({skipped} ignorados)`,
+            {
+              imported: result.imported,
+              skipped: result.skipped,
+            },
+          ),
         ),
       });
       setFile(null);
@@ -347,7 +355,11 @@ export function ImportForm() {
         {activeTab === 'json' && preview && (
           <div className="bg-paper p-4 rounded border border-fade/10">
             <h3 className="text-xs font-bold uppercase tracking-wider text-fade mb-2">
-              {String(translateWithValues(i18n, msg`Prévia (primeiros {count})`, { count: preview.length }))}
+              {String(
+                translateWithValues(i18n, msg`Prévia (primeiros {count})`, {
+                  count: preview.length,
+                }),
+              )}
             </h3>
             <pre className="text-[10px] overflow-auto max-h-40 text-ink/80 font-mono">
               {JSON.stringify(preview, null, 2)}

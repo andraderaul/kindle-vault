@@ -141,7 +141,7 @@ msgstr "Leyendo destacado {current} de {total}"
 msgid "Ler →"
 msgstr "Leer →"
 
-#: src/components/HighlightCard.tsx:28
+#: src/components/HighlightCard.tsx:29
 msgid "Ler highlight"
 msgstr "Leer destacado"
 
@@ -149,7 +149,7 @@ msgstr "Leer destacado"
 msgid "Livro →"
 msgstr "Libro →"
 
-#: src/components/HighlightCard.tsx:50
+#: src/components/HighlightCard.tsx:51
 #: src/components/SearchResultsSection.tsx:51
 msgid "Lok. {location}"
 msgstr "Loc. {location}"
@@ -195,7 +195,7 @@ msgstr "Otras voces"
 msgid "Pausar"
 msgstr "Pausar"
 
-#: src/components/HighlightCard.tsx:28
+#: src/components/HighlightCard.tsx:29
 msgid "Pausar highlight"
 msgstr "Pausar destacado"
 
