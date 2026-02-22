@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { buildWordMap, type WordMap } from '@/lib/utils/wordMap';
 
 const DEFAULT_PITCH = 1.05;
 const DEFAULT_VOLUME = 1;
@@ -38,7 +37,6 @@ function humanize(text: string): string {
 export function useSpeech() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1);
-  const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
   const [rate, setRate] = useState(1);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] =
@@ -46,7 +44,6 @@ export function useSpeech() {
 
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const blocksRef = useRef<string[]>([]);
-  const wordMapRef = useRef<WordMap>({});
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -82,25 +79,12 @@ export function useSpeech() {
       if (!synth || index >= blocks.length) {
         setIsPlaying(false);
         setCurrentIndex(-1);
-        setActiveWordIndex(null);
         return;
       }
 
       const text = blocks[index];
       const spokenText = humanize(text);
       const utterance = new SpeechSynthesisUtterance(spokenText);
-
-      wordMapRef.current = buildWordMap(spokenText);
-
-      utterance.onboundary = (event) => {
-        if (event.name !== 'word') {
-          return;
-        }
-        const wordIndex = wordMapRef.current[event.charIndex];
-        if (wordIndex !== undefined) {
-          setActiveWordIndex(wordIndex);
-        }
-      };
 
       if (selectedVoice) {
         utterance.voice = selectedVoice;
@@ -115,19 +99,16 @@ export function useSpeech() {
       };
 
       utterance.onend = () => {
-        setActiveWordIndex(null);
         speakNext(index + 1);
       };
 
       utterance.onerror = (e) => {
         if (e.error === 'canceled' || e.error === 'interrupted') {
           setIsPlaying(false);
-          setActiveWordIndex(null);
           return;
         }
         console.error('[useSpeech]', e.error);
         setIsPlaying(false);
-        setActiveWordIndex(null);
       };
 
       synth.speak(utterance);
@@ -188,7 +169,6 @@ export function useSpeech() {
     synth.cancel();
     setIsPlaying(false);
     setCurrentIndex(-1);
-    setActiveWordIndex(null);
     blocksRef.current = [];
   }, []);
 
@@ -225,7 +205,6 @@ export function useSpeech() {
   return {
     isPlaying,
     currentIndex,
-    activeWordIndex,
     rate,
     voices,
     selectedVoice,

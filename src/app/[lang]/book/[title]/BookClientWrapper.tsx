@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { HighlightCard } from '@/components/HighlightCard';
 import { useSpeech } from '@/hooks/useSpeech';
@@ -10,6 +10,8 @@ const STAGGER_MAX_INDEX = 20;
 const STAGGER_DELAY_MS = 50;
 
 export function BookClientWrapper({ highlights }: { highlights: Highlight[] }) {
+  const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   const {
     isPlaying,
     currentIndex,
@@ -25,6 +27,33 @@ export function BookClientWrapper({ highlights }: { highlights: Highlight[] }) {
   } = useSpeech();
 
   const blocks = useMemo(() => highlights.map((h) => h.text), [highlights]);
+
+  useEffect(() => {
+    if (currentIndex === -1) {
+      return;
+    }
+
+    const activeCard = cardRefs.current[currentIndex];
+    if (!activeCard) {
+      return;
+    }
+
+    activeCard.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  }, [currentIndex]);
+
+  const handleCardClick = useCallback(
+    (index: number) => {
+      if (isPlaying && currentIndex === index) {
+        pause();
+      } else {
+        play(blocks, index);
+      }
+    },
+    [isPlaying, currentIndex, pause, play, blocks],
+  );
 
   return (
     <div className="pb-32">
@@ -42,16 +71,14 @@ export function BookClientWrapper({ highlights }: { highlights: Highlight[] }) {
               }}
             >
               <HighlightCard
+                ref={(el) => {
+                  cardRefs.current[index] = el;
+                }}
                 highlight={highlight}
+                index={index}
                 isActive={isActive}
                 wasRead={wasRead}
-                onClick={() => {
-                  if (isPlaying && currentIndex === index) {
-                    pause();
-                  } else {
-                    play(blocks, index);
-                  }
-                }}
+                onCardClick={handleCardClick}
                 isFirst={index === 0}
               />
             </div>

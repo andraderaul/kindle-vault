@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { forwardRef, memo } from 'react';
 import { PlayIcon } from '@/components/icons';
-import { WordHighlighter } from '@/components/WordHighlighter';
 import { cn } from '@/lib/cn';
 import { translateWithValues } from '@/lib/i18n';
 import type { Highlight } from '@/types/highlight';
@@ -13,7 +12,6 @@ type HighlightCardProps = {
   highlight: Highlight;
   index: number;
   isActive: boolean;
-  activeWordIndex: number | null;
   wasRead: boolean;
   onCardClick: (index: number) => void;
   isFirst: boolean;
@@ -25,15 +23,7 @@ const HighlightCardComponent = forwardRef<
   HTMLButtonElement,
   HighlightCardProps
 >(function HighlightCard(
-  {
-    highlight,
-    index,
-    isActive,
-    activeWordIndex,
-    wasRead,
-    onCardClick,
-    isFirst,
-  },
+  { highlight, index, isActive, wasRead, onCardClick, isFirst },
   ref,
 ) {
   const { i18n, _ } = useLingui();
@@ -55,17 +45,9 @@ const HighlightCardComponent = forwardRef<
     >
       <div className="flex items-start">
         <div className="flex-1">
-          {isActive ? (
-            <WordHighlighter
-              text={highlight.text}
-              activeWordIndex={activeWordIndex}
-              className={cn(TEXT_CLASS, isFirst && 'drop-cap')}
-            />
-          ) : (
-            <p className={cn(TEXT_CLASS, isFirst && 'drop-cap')}>
-              {highlight.text}
-            </p>
-          )}
+          <p className={cn(TEXT_CLASS, isFirst && 'drop-cap')}>
+            {highlight.text}
+          </p>
           {highlight.location != null && (
             <div className="mt-4 text-xs text-fade/70 uppercase tracking-widest font-mono">
               {translateWithValues(i18n, msg`Lok. {location}`, {
